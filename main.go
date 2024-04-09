@@ -1,7 +1,7 @@
 package main
 
 import (
-	Routers "keyanProj/router"
+	Routers "SCIProj/router"
 	"log"
 )
 

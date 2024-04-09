@@ -1,4 +1,4 @@
-module keyanProj
+module SCIProj
 
 go 1.20
 
