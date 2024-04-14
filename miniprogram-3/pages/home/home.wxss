@@ -1,0 +1,44 @@
+.custom-navigation-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+}
+
+
+.navigation-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333; 
+  padding: 10px; 
+}
+.container {
+  margin-top: 100rpx;
+  padding: 20rpx;
+}
+
+.button-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.button, .add-button {
+  margin-bottom: 10rpx; 
+}
+
+.add-button {
+  background-color: #86818171;
+  color: white;
+}
+
+.button-row {
+  display: flex; 
+  justify-content: center;
+  gap: 20rpx;
+}
+.scanner{
+  height: 80rpx;
+  border:1rpx solid #ccc;
+}
