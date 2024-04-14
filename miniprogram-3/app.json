@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/home",
+    "pages/xinxi/xinxi",
     "pages/pensonal/pensonal",
     "pages/logs/logs"
   ],

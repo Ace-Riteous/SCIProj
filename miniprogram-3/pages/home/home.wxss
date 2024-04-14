@@ -6,8 +6,6 @@
   background-color: #FFFFFF;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
 }
-
-
 .navigation-title {
   font-size: 18px;
   font-weight: bold;
@@ -25,12 +23,14 @@
 }
 
 .button, .add-button {
-  margin-bottom: 10rpx; 
+  margin-bottom: 10rpx;
+  width: 700rpx !important; /* 调整按钮宽度 */ 
+  font-size: 32rpx; /* 调整按钮内文字大小 */
+  padding: 20rpx; /* 根据需要调整内部空间，可以让按钮看起来更大 */
 }
 
 .add-button {
   background-color: #86818171;
-  color: white;
 }
 
 .button-row {

@@ -1,45 +1,49 @@
-// pages/home/home.js
+// pages/xinxi/xinxi.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    buttons: [],     
-    buttonName: '', 
-    showInput: false  
-  },
 
-  onShow: function() {
-    this.fetchButtons();
   },
-
-  fetchButtons: function() {
+// 提交表单的事件处理函数
+  submitForm: function(e) {
+    let formData = e.detail.value; 
+    console.log(formData);
     wx.request({
-      url: 'https://127.0.0.1/see_competitions', 
-      method: 'GET',
-      success: (res) => {
-        // 假设服务器返回的数据格式是 { data: [{name: '比赛1'}, {name: '比赛2'}] }
-        if (res.statusCode === 200) {
-          this.setData({ buttons: res.data.data });
+      url: 'https://127.0.0.1/add_competition', 
+      method: 'POST',
+      data: formData,
+      success: function(res) {
+        if (res.statusCode == 200) {
+          wx.showToast({
+            title: '提交成功',
+            icon: 'success'
+          });
+          wx.navigateTo({
+            url: '/pages/home/home'
+          });
+        } else {
+          wx.showToast({
+            title: '提交失败',
+            icon: 'none'
+          });
         }
-      },
-      fail: (err) => {
-        console.error('请求失败:', err);
       }
     });
   },
-
-  addButton: function() {
-    wx.navigateTo({
-      url: '/pages/xinxi/xinxi' 
+  // 处理取消操作的事件处理函数
+  cancelForm: function() {
+    wx.navigateBack({
+      delta: 1 
     })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad(options) {
     var that = this;
     wx.getSystemInfo({
       success: function (res) {

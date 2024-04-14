@@ -27,7 +27,6 @@ Page({
   },
   showActionSheet: function () {
     const that = this;
-    // 显示操作菜单
     wx.showActionSheet({
       itemList: ['登录', '注册'], // 操作菜单列表
       success: function (res) {

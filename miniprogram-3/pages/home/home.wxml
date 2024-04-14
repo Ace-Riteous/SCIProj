@@ -6,13 +6,6 @@
     <block wx:for="{{buttons}}" wx:key="id">
       <button class="button" plain="{{true}}">{{item.name}}</button>
     </block>
-    <view wx:if="{{showInput}}">
-      <input class="scanner"type="text" placeholder="输入比赛名称" bindinput="inputChange" />
-      <view class="button-row"> 
-        <button bindtap="confirmButton">确认添加</button>
-        <button bindtap="cancelAddButton">取消</button>
-      </view>
-    </view>
     <button class="add-button" wx:if="{{!showInput}}" bindtap="addButton">+发布比赛</button>
   </view>
 </view>
