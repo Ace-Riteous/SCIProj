@@ -1,7 +1,7 @@
 package model
 
 type User struct {
-	ID       int    `json:"id"`
+	ID       string `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
@@ -13,13 +13,20 @@ type User struct {
 
 type Student struct {
 	User
-	SID       int    `json:"sid"`
+	SID       string `json:"sid"`
 	School    string `json:"school"`
 	MyTeacher string `json:"my_teacher"`
 }
 
 type Teacher struct {
 	User
-	TID    int    `json:"tid"`
-	School string `json:"school"`
+	TeacherID string `json:"teacherid"`
+	School    string `json:"school"`
+}
+
+type Team struct {
+	Student []Student `json:"teamstudent"`
+	Teacher Teacher   `json:"teamteacher"`
+	TeamId  string    `json:"teamid"`
+	Name    string    `json:"teamname"`
 }

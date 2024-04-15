@@ -7,7 +7,7 @@ import (
 
 func SetRouters(r *gin.Engine) {
 
-	r.GET("/see-competitions", api.SeeCompetitions)
-	r.POST("/add-competition", api.AddCompetition)
+	r.GET("/see_competitions", api.SeeCompetitions)
+	r.POST("/add_competition", api.AddCompetition)
 
 }
