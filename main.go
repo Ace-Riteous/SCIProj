@@ -1,13 +1,23 @@
 package main
 
 import (
-	Routers "SCIProj/router"
-	"log"
+	"SCIProj/core"
+	"SCIProj/global"
+	"SCIProj/initialize"
+	"go.uber.org/zap"
 )
 
 func main() {
-	r := Routers.SetRouters()
-	if err := r.Run(":8080"); err != nil {
-		log.Fatal("Server start failed")
-	}
+	global.VP = core.Viper()
+	global.LOG = core.Zap()
+	global.DB = initialize.Gorm()
+	db, _ := global.DB.DB()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			global.LOG.Error("Database close failed", zap.Any(" err:", err))
+		}
+	}()
+
+	core.RunWindowsServer("127.0.0.1:9090")
 }

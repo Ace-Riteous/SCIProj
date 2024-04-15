@@ -1,0 +1,6 @@
+[SCIProj->]2024/04/15 - 13:19:35.396	[31merror[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/gorm.go:31	MySQL Start Error!	{"err": "Error 1049 (42000): Unknown database 'sciproj'"}
+[SCIProj->]2024/04/15 - 13:20:38.046	[31merror[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/redis.go:19	redis connect ping failed, err:	{"err": "ERR Client sent AUTH, but no password is set"}
+[SCIProj->]2024/04/15 - 13:24:28.882	[31merror[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/redis.go:19	redis connect ping failed, err:	{"err": "ERR Client sent AUTH, but no password is set"}
+[SCIProj->]2024/04/15 - 13:25:41.326	[31merror[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/redis.go:19	redis connect ping failed, err:	{"err": "ERR Client sent AUTH, but no password is set"}
+[SCIProj->]2024/04/15 - 13:29:18.885	[34minfo[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/redis.go:21	redis connect ping response:	{"pong": "PONG"}
+[SCIProj->]2024/04/15 - 13:33:13.422	[34minfo[0m	D:/手铐学长/李政相关文件/SCIProj/initialize/redis.go:21	redis connect ping response:	{"pong": "PONG"}
