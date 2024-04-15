@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "list-com":"/components/list/list"
+  }
+  
+}

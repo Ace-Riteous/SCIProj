@@ -1,0 +1,13 @@
+<view class="custom-navigation-bar" style="padding-top:{{statusBarHeight}}px;">
+  <view class="navigation-title">个人主页</view>
+</view>
+<!-- pages/auth/auth.wxml -->
+<view class="container">
+  <view class="profile-section">
+    <image class="avatar" src="https://img0.baidu.com/it/u=1240274933,2284862568&fm=253&fmt=auto&app=138&f=PNG?w=180&h=180"></image>
+    <button class="action-btn" bindtap="showActionSheet">登录/注册</button>
+  </view>
+</view>
+
+<button class="choosebutton" bindtap="">我发布的赛事</button>
+

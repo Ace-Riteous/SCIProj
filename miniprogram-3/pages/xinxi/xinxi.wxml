@@ -1,0 +1,47 @@
+<!--pages/xinxi/xinxi.wxml-->
+<view class="custom-navigation-bar" style="padding-top:{{statusBarHeight}}px;">
+  <view class="navigation-title">添加比赛信息</view>
+</view>
+
+<!-- addCompetition.wxml -->
+<view class="container">
+  <!-- 表单区域 -->
+  <form bindsubmit="submitForm">
+    <!-- 比赛名称 -->
+    <view class="form-item">
+      <view class="form-label">比赛名称:</view>
+      <input class="form-input" placeholder="请输入比赛名称" name="name"/>
+    </view>
+
+    <!-- 比赛日期 -->
+    <view class="form-item">
+      <view class="form-label">比赛日期地点:</view>
+      <input class="form-input" placeholder="请选择比赛日期地点" type="date" name="date"/>
+    </view>
+
+    <!-- 比赛地点 -->
+    <view class="form-item">
+      <view class="form-label">比赛要求:</view>
+      <input class="form-input" placeholder="请输入比赛要求" name="requair"/>
+    </view>
+
+    <!-- 比赛描述 -->
+    <view class="form-item">
+      <view class="form-label">比赛描述:</view>
+      <textarea class="form-textarea" placeholder="请输入比赛描述" name="description"></textarea>
+    </view>
+
+    <!-- 比赛链接 -->
+    <view class="form-item">
+      <view class="form-label">比赛链接:</view>
+      <input class="form-input" placeholder="请输入比赛链接" name="link"/>
+    </view>
+  
+    <!-- 提交按钮 -->
+    <button class="submit-button" form-type="submit">提交</button>
+    <!-- 重置按钮 -->
+    <button class="reset-button" form-type="reset" >重置</button>
+    <!-- 取消按钮 -->
+    <button class="cancel-button" bindtap="cancelForm">取消</button>
+  </form>
+</view>
