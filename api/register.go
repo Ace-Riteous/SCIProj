@@ -21,12 +21,14 @@ func Register(c *gin.Context) {
 		Role:      c.PostForm("role"),
 		Avatar:    c.PostForm("avatar"),
 		Age:       age,
+		AuthID:    c.PostForm("authid"),
 		StudentID: c.PostForm("studentid"),
-		MyTeacher: c.PostForm("myteacher"),
+		MyTeacher: []model.Teacher{},
 	}
 	err = service.Register(newStudent, c)
 	if err != nil {
 		model.Error(c, err)
 		return
 	}
+	model.Success(c, nil)
 }

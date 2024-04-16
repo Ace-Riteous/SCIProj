@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-func init() {
-	global.JWTKey = []byte(global.VP.GetString("jwt.signing-key"))
-}
-
 type Claims struct {
 	Uid string
 	jwt.StandardClaims

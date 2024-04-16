@@ -8,13 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Login(uid string, password string, c *gin.Context) error {
+func Login(uid string, password string, c *gin.Context) (data interface{}, err error) {
 	password = utils.Md5Crypt(password, "sciproj")
-	student := dao.GetStudent(uid, password)
+	student, err := dao.GetStudent(uid, password)
 	if student == nil {
-		teacher := dao.GetTeacher(uid, password)
+		teacher, err := dao.GetTeacher(uid, password)
 		if teacher == nil {
-			return errors.New("用户不存在或账号密码不正确！")
+			return nil, err
 		}
 		t := model.Teacher{
 			TeacherID: teacher.TeacherID,
@@ -23,10 +23,9 @@ func Login(uid string, password string, c *gin.Context) error {
 		}
 		tlr, err := TeacherLogin(t)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		model.Success(c, tlr)
-		return nil
+		return tlr, nil
 	}
 	s := model.Student{
 		StudentID: student.StudentID,
@@ -35,11 +34,10 @@ func Login(uid string, password string, c *gin.Context) error {
 	}
 	slr, err := StudentLogin(s)
 	if err != nil {
-		return err
+		return nil, err
 
 	}
-	model.Success(c, slr)
-	return nil
+	return slr, nil
 }
 
 func StudentLogin(student model.Student) (*model.StudentLoginRes, error) {

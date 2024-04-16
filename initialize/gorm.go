@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"SCIProj/global"
-	"fmt"
+	"SCIProj/model"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -19,8 +19,6 @@ func Gorm() *gorm.DB {
 // GormMysql 初始化Mysql数据库
 func GormMysql() *gorm.DB {
 	m := global.CONFIG.Mysql
-	fmt.Println(m)
-
 	dsn := m.Username + ":" + m.Password + "@tcp(" + m.Path + ")/" + m.Dbname + "?" + m.Config
 	mysqlConfig := mysql.Config{
 		DSN:                       dsn,   // DSN data source name
@@ -38,6 +36,12 @@ func GormMysql() *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+		err = db.AutoMigrate(&model.Student{}, &model.Teacher{}, &model.Competition{}, &model.Team{})
+		if err != nil {
+			global.LOG.Error("register table failed", zap.Any("err", err))
+			os.Exit(0)
+			return nil
+		}
 		return db
 	}
 }

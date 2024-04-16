@@ -9,7 +9,7 @@ import (
 func Routers() *gin.Engine {
 	var Router = gin.Default()
 
-	Router.Use(middleware.CORSMiddleware(), middleware.ZapLogger())
+	Router.Use(middleware.CORSMiddleware(), middleware.ZapLogger(), middleware.JWTAuthMiddelware())
 
 	router.SetRouters(Router)
 

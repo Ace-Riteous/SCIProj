@@ -15,6 +15,5 @@ func Register(student model.Student, c *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	model.Success(c, nil)
 	return nil
 }

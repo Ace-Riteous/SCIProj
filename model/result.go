@@ -14,13 +14,12 @@ type Result struct {
 
 func Success(c *gin.Context, data interface{}) {
 	var result Result
-	result.Code = 200
+	result.Code = http.StatusOK
 	result.Error = ""
 	result.Data = data
 	resultJson, _ := json.Marshal(result)
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, resultJson)
-
 }
 
 func Error(c *gin.Context, err error) {

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func SeeCompetitions(c *gin.Context) {
+func GetCompetition(c *gin.Context) {
 	//无需判断登陆状态即可使用
 	CompetitionList, err := service.FetchCompetitionList()
 	if err != nil {
@@ -29,28 +29,30 @@ func AddCompetition(c *gin.Context) {
 		return
 	}
 	//获取学生和教师信息，教师信息可以从token中获取，学生信息需要从前端传入
-	student, _ := service.GetStudentById(c.PostForm("学生ID"))
+	student, _ := service.GetMultyStudentsById(c.PostForm("studentid"))
 	teacher, _ := service.GetTeacherById(claim.Uid)
-	var students []string
+	var students []model.Student
 	for _, s := range student {
-		students = append(students, s.Username)
+		students = append(students, *s)
 	}
-	newArticle := model.Article{
-		PId:        c.PostForm("PId"),
-		Title:      c.PostForm("比赛名称"),
-		Request:    c.PostForm("比赛要求"),
-		Content:    c.PostForm("比赛描述"),
-		Teacher:    teacher.Username,
-		Student:    students,
+	newCompetition := model.Competition{
+		CID:     c.PostForm("CID"),
+		Title:   c.PostForm("title"),
+		Request: c.PostForm("request"),
+		Content: c.PostForm("content"),
+		Team: model.Team{
+			Student: students,
+			Teacher: *teacher,
+		},
 		CreateTime: time.Now(),
 		UpdateTime: time.Now(),
-		DeleteTime: global.EmptyTime,
+		DeleteTime: nil,
 	}
-	err = service.AddCompetition(&newArticle)
+	err = service.AddCompetition(&newCompetition)
 	if err != nil {
 		model.Error(c, err)
 	}
-	global.REDIS.Set("NewArticle", newArticle, 0)
-	model.Success(c, newArticle)
+	global.REDIS.Set("NewCompetition", newCompetition, 0)
+	model.Success(c, newCompetition)
 
 }

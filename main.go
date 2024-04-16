@@ -10,7 +10,9 @@ import (
 func main() {
 	global.VP = core.Viper()
 	global.LOG = core.Zap()
+
 	global.DB = initialize.Gorm()
+
 	db, _ := global.DB.DB()
 	defer func() {
 		err := db.Close()
