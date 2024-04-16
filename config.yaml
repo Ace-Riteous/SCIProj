@@ -3,7 +3,7 @@
 
 # jwt configuration
 jwt:
-  signing-key: 'SCIProj'
+  signing-key: 'sciroj'
 
 
 # zap logger configuration

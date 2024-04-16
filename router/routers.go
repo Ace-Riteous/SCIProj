@@ -2,13 +2,19 @@ package router
 
 import (
 	"SCIProj/api"
+	"SCIProj/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func SetRouters(r *gin.Engine) {
-	r.GET("/see_competitions", api.SeeCompetitions)
-	r.POST("/add_competition", api.AddCompetition)
-	r.POST("/login", api.Login)
-	r.POST("/register", api.Register)
-
+	UserGroup := r.Group("/user")
+	{
+		UserGroup.POST("/login", api.Login)
+		UserGroup.POST("/register", api.Register)
+	}
+	PostGroup := r.Group("/post")
+	{
+		PostGroup.GET("/see_competitions", api.SeeCompetitions)
+		PostGroup.POST("/add_competition", api.AddCompetition).Use(middleware.JWTAuthMiddelware())
+	}
 }

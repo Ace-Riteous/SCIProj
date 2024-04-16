@@ -16,4 +16,5 @@ var (
 	LOG       *zap.Logger
 	REDIS     *redis.Client
 	EmptyTime time.Time
+	JWTKey    []byte
 )
