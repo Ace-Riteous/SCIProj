@@ -3,7 +3,7 @@
 
 # jwt configuration
 jwt:
-  signing-key: 'sciproj'
+  signing-key: 'SCIProj'
 
 
 # zap logger configuration
@@ -23,7 +23,7 @@ zap:
 mysql:
   path: '127.0.0.1:3306'
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
-  db-name: 'mini_app_user'
+  db-name: 'SCIProj'
   username: 'root'
   password: '941cao**'
   max-idle-conns: 10

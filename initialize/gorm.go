@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"SCIProj/global"
+	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,6 +19,8 @@ func Gorm() *gorm.DB {
 // GormMysql 初始化Mysql数据库
 func GormMysql() *gorm.DB {
 	m := global.CONFIG.Mysql
+	fmt.Println(m)
+
 	dsn := m.Username + ":" + m.Password + "@tcp(" + m.Path + ")/" + m.Dbname + "?" + m.Config
 	mysqlConfig := mysql.Config{
 		DSN:                       dsn,   // DSN data source name
