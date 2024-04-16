@@ -8,9 +8,8 @@ import (
 
 func Login(c *gin.Context) {
 	//接收用户名密码，返回json
-	params := model.GetRequestJsonParam(c)
-	uid := params["uid"].(string)
-	password := params["password"].(string)
+	uid := c.PostForm("uid")
+	password := c.PostForm("password")
 	err := service.Login(uid, password, c)
 	if err != nil {
 		model.Error(c, err)

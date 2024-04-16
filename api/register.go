@@ -4,22 +4,27 @@ import (
 	"SCIProj/model"
 	"SCIProj/service"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func Register(c *gin.Context) {
-	params := model.GetRequestJsonParam(c)
-	newStudent := model.Student{
-		params["username"].(string),
-		params["password"].(string),
-		params["email"].(string),
-		params["phone"].(string),
-		params["role"].(string),
-		params["avatar"].(string),
-		params["age"].(int),
-		params["studentid"].(string),
-		params["my_teacher"].(string),
+	age, err := strconv.Atoi(c.PostForm("age"))
+	if err != nil {
+		model.Error(c, err)
+		return
 	}
-	err := service.Register(newStudent, c)
+	newStudent := model.Student{
+		Username:  c.PostForm("username"),
+		Password:  c.PostForm("password"),
+		Email:     c.PostForm("email"),
+		Phone:     c.PostForm("phone"),
+		Role:      c.PostForm("role"),
+		Avatar:    c.PostForm("avatar"),
+		Age:       age,
+		StudentID: c.PostForm("studentid"),
+		MyTeacher: c.PostForm("myteacher"),
+	}
+	err = service.Register(newStudent, c)
 	if err != nil {
 		model.Error(c, err)
 		return
