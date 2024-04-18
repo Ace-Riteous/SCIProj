@@ -8,7 +8,8 @@ import (
 func RunWindowsServer(Addr string) {
 	initialize.Redis()
 	initialize.JWTANDMD()
-	//initialize.TestData()
+	//初始化一条数据，方便测试
+	initialize.TestData()
 	r := initialize.Routers()
 	if err := r.Run(Addr); err != nil {
 		log.Fatal("Server start failed!")
