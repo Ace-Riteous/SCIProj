@@ -3,7 +3,8 @@ package service
 import (
 	"SCIProj/dao"
 	"SCIProj/model"
-	"fmt"
+	"errors"
+	"github.com/gin-gonic/gin"
 )
 
 func GetTeacherById(teacherId string) (teacher *model.Teacher, err error) {
@@ -22,11 +23,11 @@ func GetStudentById(studentId string) (student *model.Student, err error) {
 	return student, nil
 }
 
-func GetMultyStudentsById(studentsid ...string) (student []*model.Student, err error) {
+func GetMultyStudentsById(c *gin.Context, studentsid ...string) (student []*model.Student, err error) {
 	for _, id := range studentsid {
 		s, err := dao.GetStudentById(id)
 		if err != nil {
-			fmt.Println(err)
+			model.Error(c, errors.New("学生: "+id+"不存在"))
 			continue
 		}
 		student = append(student, s)

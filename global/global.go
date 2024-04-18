@@ -17,4 +17,5 @@ var (
 	REDIS     *redis.Client
 	EmptyTime time.Time
 	JWTKey    []byte
+	MD5SALT   string
 )

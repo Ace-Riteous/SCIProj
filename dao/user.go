@@ -3,10 +3,11 @@ package dao
 import (
 	"SCIProj/global"
 	"SCIProj/model"
+	"errors"
 )
 
 func GetStudent(uid string, password string) (student *model.Student, err error) {
-	err = global.DB.Table("students").Where("studentid = ? AND password = ?", uid, password).Find(&student).Error
+	err = global.DB.Model(model.Student{}).Where("student_id = ? AND password = ?", uid, password).First(&student).Error
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +15,7 @@ func GetStudent(uid string, password string) (student *model.Student, err error)
 }
 
 func GetTeacher(uid string, password string) (teacher *model.Teacher, err error) {
-	err = global.DB.Table("students").Where("teacherid = ? AND password = ?", uid, password).Find(&teacher).Error
+	err = global.DB.Model(model.Teacher{}).Where("teacher_id = ? AND password = ?", uid, password).First(&teacher).Error
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +23,7 @@ func GetTeacher(uid string, password string) (teacher *model.Teacher, err error)
 }
 
 func GetTeacherById(id string) (teacher *model.Teacher, err error) {
-	err = global.DB.Table("teachers").Where("id = ?", id).Find(&teacher).Error
+	err = global.DB.Model(model.Teacher{}).Where("teacher_id = ?", id).First(&teacher).Error
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +31,7 @@ func GetTeacherById(id string) (teacher *model.Teacher, err error) {
 }
 
 func GetStudentById(id string) (student *model.Student, err error) {
-	err = global.DB.Table("students").Where("id = ?", id).Find(&student).Error
+	err = global.DB.Model(model.Student{}).Where("student_id = ?", id).First(&student).Error
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +39,9 @@ func GetStudentById(id string) (student *model.Student, err error) {
 }
 
 func Register(student model.Student) error {
-	err := global.DB.Table("students").Create(student)
+	err := global.DB.Model(model.Student{}).Create(&student).Error
 	if err != nil {
-		return err.Error
+		return errors.New("注册失败")
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package api
 import (
 	"SCIProj/model"
 	"SCIProj/service"
+	"SCIProj/utils"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -13,19 +14,20 @@ func Register(c *gin.Context) {
 		model.Error(c, err)
 		return
 	}
+	pwdMd5 := utils.Md5Crypt(c.PostForm("password"))
 	newStudent := model.Student{
 		Username:  c.PostForm("username"),
-		Password:  c.PostForm("password"),
+		Password:  pwdMd5,
 		Email:     c.PostForm("email"),
 		Phone:     c.PostForm("phone"),
 		Role:      c.PostForm("role"),
 		Avatar:    c.PostForm("avatar"),
 		Age:       age,
-		AuthID:    c.PostForm("authid"),
+		SevenID:   c.PostForm("sevenid"),
 		StudentID: c.PostForm("studentid"),
-		MyTeacher: []model.Teacher{},
+		MyTeacher: c.PostForm("my_teacher"),
 	}
-	err = service.Register(newStudent, c)
+	err = service.Register(newStudent)
 	if err != nil {
 		model.Error(c, err)
 		return

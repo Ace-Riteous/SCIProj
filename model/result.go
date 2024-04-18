@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,16 +16,14 @@ func Success(c *gin.Context, data interface{}) {
 	result.Code = http.StatusOK
 	result.Error = ""
 	result.Data = data
-	resultJson, _ := json.Marshal(result)
 	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, resultJson)
+	c.JSON(http.StatusOK, result)
 }
 
 func Error(c *gin.Context, err error) {
 	var result Result
 	result.Code = -999
 	result.Error = err.Error()
-	resultJson, _ := json.Marshal(result)
 	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, resultJson)
+	c.JSON(http.StatusOK, result)
 }

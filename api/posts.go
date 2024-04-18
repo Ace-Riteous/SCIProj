@@ -5,7 +5,6 @@ import (
 	"SCIProj/model"
 	"SCIProj/service"
 	"SCIProj/utils"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -15,42 +14,37 @@ func GetCompetition(c *gin.Context) {
 	CompetitionList, err := service.FetchCompetitionList()
 	if err != nil {
 		model.Error(c, err)
+		return
 	}
 	global.REDIS.Set("CompetitionList", CompetitionList, 0)
 	model.Success(c, CompetitionList)
 }
 
 func AddCompetition(c *gin.Context) {
-	//判断教师登陆状态
-	token := c.GetHeader("Authorization")
-	_, claim, err := utils.ParseToken(token)
-	if err != nil {
-		model.Error(c, errors.New("登录已过期！"))
-		return
-	}
 	//获取学生和教师信息，教师信息可以从token中获取，学生信息需要从前端传入
-	student, _ := service.GetMultyStudentsById(c.PostForm("studentid"))
+	token := c.GetHeader("Authorization")
+	_, claim, _ := utils.ParseToken(token)
+	student, _ := service.GetMultyStudentsById(c, c.PostForm("studentid"))
 	teacher, _ := service.GetTeacherById(claim.Uid)
-	var students []model.Student
+	var students string
 	for _, s := range student {
-		students = append(students, *s)
+		students += s.Username + ","
 	}
 	newCompetition := model.Competition{
-		CID:     c.PostForm("CID"),
-		Title:   c.PostForm("title"),
-		Request: c.PostForm("request"),
-		Content: c.PostForm("content"),
-		Team: model.Team{
-			Student: students,
-			Teacher: *teacher,
-		},
+		CID:        c.PostForm("CID"),
+		Title:      c.PostForm("title"),
+		Request:    c.PostForm("request"),
+		Content:    c.PostForm("content"),
+		Team:       c.PostForm("team"),
+		Teacher:    teacher.Username,
 		CreateTime: time.Now(),
 		UpdateTime: time.Now(),
-		DeleteTime: nil,
+		DeleteTime: global.EmptyTime,
 	}
-	err = service.AddCompetition(&newCompetition)
+	err := service.AddCompetition(&newCompetition)
 	if err != nil {
 		model.Error(c, err)
+		return
 	}
 	global.REDIS.Set("NewCompetition", newCompetition, 0)
 	model.Success(c, newCompetition)

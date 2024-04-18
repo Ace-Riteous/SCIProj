@@ -5,21 +5,49 @@ import (
 	"SCIProj/model"
 	"SCIProj/utils"
 	"errors"
-	"github.com/gin-gonic/gin"
 )
 
-func Login(uid string, password string, c *gin.Context) (data interface{}, err error) {
-	password = utils.Md5Crypt(password, "sciproj")
+func Login(uid string, password string) (data interface{}, err error) {
+	password = utils.Md5Crypt(password)
 	student, err := dao.GetStudent(uid, password)
-	if student == nil {
-		teacher, err := dao.GetTeacher(uid, password)
-		if teacher == nil {
-			return nil, err
+	if err != nil {
+		return nil, err
+	}
+	if student != nil {
+		s := model.Student{
+			StudentID: student.StudentID,
+			Username:  student.Username,
+			Email:     student.Email,
+			Phone:     student.Phone,
+			Role:      student.Role,
+			Avatar:    student.Avatar,
+			Age:       student.Age,
+			SevenID:   student.SevenID,
+			MyTeacher: student.MyTeacher,
 		}
+		slr, err := StudentLogin(s)
+		if err != nil {
+			return nil, err
+
+		}
+		return slr, nil
+	}
+	teacher, err := dao.GetTeacher(uid, password)
+	if err != nil {
+		return nil, err
+	}
+	if teacher != nil {
 		t := model.Teacher{
-			TeacherID: teacher.TeacherID,
-			Username:  teacher.Username,
-			Password:  teacher.Password,
+			TeacherID:     teacher.TeacherID,
+			Username:      teacher.Username,
+			Email:         teacher.Email,
+			Phone:         teacher.Phone,
+			Role:          teacher.Role,
+			Avatar:        teacher.Avatar,
+			Age:           teacher.Age,
+			MyStudent:     teacher.MyStudent,
+			MyTeam:        teacher.MyTeam,
+			MyCompetition: teacher.MyCompetition,
 		}
 		tlr, err := TeacherLogin(t)
 		if err != nil {
@@ -27,17 +55,7 @@ func Login(uid string, password string, c *gin.Context) (data interface{}, err e
 		}
 		return tlr, nil
 	}
-	s := model.Student{
-		StudentID: student.StudentID,
-		Username:  student.Username,
-		Password:  student.Password,
-	}
-	slr, err := StudentLogin(s)
-	if err != nil {
-		return nil, err
-
-	}
-	return slr, nil
+	return nil, errors.New("该账号未注册/用户名或密码错误")
 }
 
 func StudentLogin(student model.Student) (*model.StudentLoginRes, error) {
