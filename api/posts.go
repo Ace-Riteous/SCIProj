@@ -6,6 +6,7 @@ import (
 	"SCIProj/service"
 	"SCIProj/utils"
 	"github.com/gin-gonic/gin"
+	"strings"
 	"time"
 )
 
@@ -30,16 +31,23 @@ func AddCompetition(c *gin.Context) {
 	for _, s := range student {
 		students += s.Username + ","
 	}
+	cid := time.Now().String()[2:22]
+	cid = strings.ReplaceAll(cid, " ", "")
+	cid = strings.ReplaceAll(cid, ":", "")
+	cid = strings.ReplaceAll(cid, "-", "")
+	cid = strings.ReplaceAll(cid, ".", "")
 	newCompetition := model.Competition{
-		CID:        c.PostForm("CID"),
-		Title:      c.PostForm("title"),
-		Request:    c.PostForm("request"),
-		Content:    c.PostForm("content"),
-		Team:       c.PostForm("team"),
-		Teacher:    teacher.Username,
-		CreateTime: time.Now(),
-		UpdateTime: time.Now(),
-		DeleteTime: global.EmptyTime,
+		CID:              cid,
+		Title:            c.PostForm("title"),
+		Request:          c.PostForm("request"),
+		Content:          c.PostForm("content"),
+		CompetitionTime:  c.PostForm("competitiontime"),
+		CompetitionPlace: c.PostForm("competitionplace"),
+		CompetitionLink:  c.PostForm("competitionlink"),
+		Teacher:          teacher.Username,
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		DeleteTime:       global.EmptyTime,
 	}
 	err := service.AddCompetition(&newCompetition)
 	if err != nil {

@@ -43,16 +43,19 @@ func TestData() {
 		Teacher: "test_teacher",
 	}
 	testCompetition := model.Competition{
-		CID:        "1",
-		Title:      "test_title",
-		Request:    "test_request",
-		Content:    "test_content",
-		Team:       "test_team",
-		Teacher:    "test_teacher",
-		Student:    "test_student",
-		CreateTime: time.Now(),
-		UpdateTime: time.Now(),
-		DeleteTime: time.Now(),
+		CID:              "1",
+		Title:            "test_title",
+		Request:          "test_request",
+		Content:          "test_content",
+		TeamIDs:          "2017212212",
+		CompetitionTime:  "2006-01-02 15:04:05",
+		CompetitionPlace: "test_place",
+		CompetitionLink:  "test_link",
+		Teacher:          "test_teacher",
+		Student:          "test_student",
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		DeleteTime:       time.Now(),
 	}
 	global.DB.Unscoped().Delete(&testStudent)
 	global.DB.Unscoped().Delete(&testTeacher)
