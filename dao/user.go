@@ -45,3 +45,13 @@ func Register(student model.Student) error {
 	}
 	return nil
 }
+
+func GetStudentNumsByCid(cid string) (num int, err error) {
+	var competition model.Competition
+	err = global.DB.Model(&model.Competition{}).Where("cid = ?", cid).First(&competition).Error
+	if err != nil {
+		return 0, err
+	}
+	num = competition.Member
+	return num, nil
+}

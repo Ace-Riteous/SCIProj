@@ -6,11 +6,13 @@ import (
 	"SCIProj/service"
 	"SCIProj/utils"
 	"github.com/gin-gonic/gin"
+	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func GetCompetition(c *gin.Context) {
+func GetCompetitionAll(c *gin.Context) {
 	//无需判断登陆状态即可使用
 	CompetitionList, err := service.FetchCompetitionList()
 	if err != nil {
@@ -31,13 +33,28 @@ func AddCompetition(c *gin.Context) {
 	for _, s := range student {
 		students += s.Username + ","
 	}
-	cid := time.Now().String()[2:22]
-	cid = strings.ReplaceAll(cid, " ", "")
-	cid = strings.ReplaceAll(cid, ":", "")
-	cid = strings.ReplaceAll(cid, "-", "")
-	cid = strings.ReplaceAll(cid, ".", "")
+	rand.Seed(time.Now().UnixNano())
+	maxid := 1000000000
+	minid := 999999999
+	var cid int
+	for {
+		cid = rand.Intn(maxid) + minid
+		isExist, err := service.CheckCidExist("c" + strconv.Itoa(cid))
+		if err != nil {
+			if strings.Compare(err.Error(), "CId已存在") == 0 {
+				continue
+			}
+			model.Error(c, err)
+			return
+
+		}
+		if isExist == false {
+			break
+		}
+	}
+	competitionid := "c" + strconv.Itoa(cid)
 	newCompetition := model.Competition{
-		CID:              cid,
+		CId:              competitionid,
 		Title:            c.PostForm("title"),
 		Request:          c.PostForm("request"),
 		Content:          c.PostForm("content"),

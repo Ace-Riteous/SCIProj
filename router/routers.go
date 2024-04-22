@@ -14,7 +14,14 @@ func SetRouters(r *gin.Engine) {
 	}
 	PostGroup := r.Group("/post")
 	{
-		PostGroup.GET("/see_competitions", api.GetCompetition)
+		PostGroup.GET("/see_competition", api.GetCompetitionAll)
 		PostGroup.POST("/add_competition", api.AddCompetition)
+	}
+	TeamGroup := r.Group("/team")
+	{
+		TeamGroup.POST("/new_team", api.NewTeam)
+		TeamGroup.POST("/get_team", api.GetTeamAll)
+		TeamGroup.GET("/get_team_is_not_full", api.GetTeamNotFull)
+		TeamGroup.PUT("/join_team", api.JoinTeam)
 	}
 }

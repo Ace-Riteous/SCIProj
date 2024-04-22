@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Competition struct {
-	CID              string    `gorm:"type:varchar(10);index:cid;primary_key;comment:比赛号" json:"cid"`
+	CId              string    `gorm:"type:varchar(20);index:cid;primary_key;comment:比赛号" json:"cid"`
 	Title            string    `gorm:"type:varchar(100);index:title;comment:比赛标题" json:"title"`
 	Request          string    `gorm:"type:longtext;comment:比赛要求" json:"request"`
 	Member           int       `gorm:"type:int;not null;comment:团队人数" json:"member"`

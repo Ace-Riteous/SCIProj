@@ -28,8 +28,10 @@ type Teacher struct {
 }
 
 type Team struct {
-	Student string `gorm:"type:varchar(50);comment:团队成员" json:"teamstudent"`
-	Teacher string `gorm:"type:varchar(20);comment:指导老师" json:"teamteacher"`
-	TeamId  string `gorm:"type:varchar(20);index:teamid;primary_key;comment:团队号" json:"teamid"`
-	Name    string `gorm:"type:varchar(20);not null;index:teamname;comment:团队姓名" json:"teamname"`
+	StudentIds string `gorm:"type:varchar(100);comment:团队成员" json:"teamstudentids"`
+	TeacherId  string `gorm:"type:varchar(20);comment:指导老师" json:"teamteacherid"`
+	CId        string `gorm:"type:varchar(20);comment:竞赛号" json:"cid"`
+	TeamId     string `gorm:"type:varchar(20);index:teamid;primary_key;comment:团队号" json:"teamid"`
+	Name       string `gorm:"type:varchar(20);not null;index:teamname;comment:团队姓名" json:"teamname"`
+	IsFull     bool   `gorm:"type:bool;default:false;comment:是否满员" json:"isfull"`
 }

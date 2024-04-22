@@ -20,3 +20,11 @@ func AddCompetition(competition *model.Competition) error {
 	}
 	return nil
 }
+
+func CheckCidExist(cid string) (bool, error) {
+	isExist, err := dao.CheckCidExist(cid)
+	if err != nil {
+		return isExist, err
+	}
+	return isExist, nil
+}
