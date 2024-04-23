@@ -47,3 +47,30 @@ func FetchTeamList() (TeamList []model.Team, err error) {
 	return TeamList, nil
 
 }
+
+func FetchTeamNotFullList() (teamlist []model.Team, err error) {
+	teamlist, err = dao.FetchTeamNotFullList()
+	if err != nil {
+		return nil, err
+	}
+	return teamlist, nil
+
+}
+
+func FetchTeamByTeamId(teamid string) (team model.Team, err error) {
+	team, err = dao.FetchTeamByTeamId(teamid)
+	if err != nil {
+		return team, err
+	}
+	return team, nil
+
+}
+
+func UpdateTeam(team model.Team) error {
+	err := dao.UpdateTeam(team)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

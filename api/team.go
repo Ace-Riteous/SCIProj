@@ -4,6 +4,7 @@ import (
 	"SCIProj/global"
 	"SCIProj/model"
 	"SCIProj/service"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"strconv"
@@ -62,7 +63,48 @@ func NewTeam(c *gin.Context) {
 }
 
 func JoinTeam(c *gin.Context) {
-
+	teamid := c.PostForm("teamid")
+	studentid := c.PostForm("studentid")
+	team, err := service.FetchTeamByTeamId(teamid)
+	if err != nil {
+		model.Error(c, err)
+		return
+	}
+	if team.IsFull {
+		model.Error(c, errors.New("队伍已满员"))
+		return
+	}
+	studentList := make([]string, 0)
+	if team.StudentIds != "" {
+		studentList = strings.Split(team.StudentIds, ",")
+		for _, v := range studentList {
+			if strings.Compare(v, studentid) == 0 {
+				model.Error(c, errors.New("学生"+studentid+"已在队伍中"))
+				return
+			}
+		}
+		studentList = append(studentList, studentid)
+	} else {
+		studentList = append(studentList, studentid)
+	}
+	team.StudentIds = strings.Join(studentList, ",")
+	studentNum, err := service.GetStudentNumsByCid(team.CId)
+	if err != nil {
+		model.Error(c, err)
+		return
+	}
+	isfull, err := service.TeamIsFull(studentNum, teamid)
+	if err != nil {
+		model.Error(c, err)
+		return
+	}
+	team.IsFull = isfull
+	err = service.UpdateTeam(team)
+	if err != nil {
+		model.Error(c, err)
+		return
+	}
+	model.Success(c, team)
 }
 
 func GetTeamAll(c *gin.Context) {
@@ -77,5 +119,11 @@ func GetTeamAll(c *gin.Context) {
 }
 
 func GetTeamNotFull(c *gin.Context) {
-
+	TeamList, err := service.FetchTeamNotFullList()
+	if err != nil {
+		model.Error(c, err)
+		return
+	}
+	global.REDIS.Set("TeamNotFullList", TeamList, 0)
+	model.Success(c, TeamList)
 }

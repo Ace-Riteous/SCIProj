@@ -53,3 +53,31 @@ func FetchTeamList() (teamList []model.Team, err error) {
 	return teamList, nil
 
 }
+
+func FetchTeamNotFullList() (teamlist []model.Team, err error) {
+	err = global.DB.Model(&model.Team{}).Where("isfull = ?", false).Find(&teamlist).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(teamlist) == 0 {
+		return nil, errors.New("所有队伍已满员")
+	}
+	return teamlist, nil
+}
+
+func FetchTeamByTeamId(teamid string) (team model.Team, err error) {
+	err = global.DB.Model(&model.Team{}).Where("teamid = ?", teamid).First(&team).Error
+	if err != nil {
+		return team, err
+	}
+	return team, nil
+}
+
+func UpdateTeam(team model.Team) error {
+	err := global.DB.Model(&model.Team{}).Where("teamid = ?", team.TeamId).Updates(&team).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
