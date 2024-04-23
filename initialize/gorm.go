@@ -36,6 +36,7 @@ func GormMysql() *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+
 		err = db.AutoMigrate(&model.Student{}, &model.Teacher{}, &model.Competition{}, &model.Team{})
 		if err != nil {
 			global.LOG.Error("register table failed", zap.Any("err", err))

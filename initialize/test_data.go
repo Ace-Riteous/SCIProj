@@ -5,7 +5,6 @@ import (
 	"SCIProj/model"
 	"SCIProj/utils"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -37,15 +36,18 @@ func TestData() {
 	}
 
 	testTeam := model.Team{
-		TeamId:  "2017212212",
-		Name:    "test_team",
-		Student: "test_student",
-		Teacher: "test_teacher",
+		TeamId:     "team1000000001",
+		Name:       "test_team",
+		StudentIds: "2017212210,",
+		TeacherId:  "2017212211",
+		CId:        "1",
+		IsFull:     false,
 	}
 	testCompetition := model.Competition{
-		CID:              "1",
+		CId:              "c1000000001",
 		Title:            "test_title",
 		Request:          "test_request",
+		Member:           4,
 		Content:          "test_content",
 		TeamIDs:          "2017212212",
 		CompetitionTime:  "2006-01-02 15:04:05",
@@ -62,26 +64,24 @@ func TestData() {
 	global.DB.Unscoped().Delete(&testTeam)
 	global.DB.Unscoped().Delete(&testCompetition)
 
-	err := global.DB.Model(model.Student{}).Create(&testStudent).Error
+	err := global.DB.Model(&model.Student{}).Create(&testStudent).Error
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("pass1")
-	err = global.DB.Model(model.Teacher{}).Create(&testTeacher).Error
+	err = global.DB.Model(&model.Teacher{}).Create(&testTeacher).Error
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("pass2")
-	err = global.DB.Model(model.Team{}).Create(&testTeam).Error
+	err = global.DB.Model(&model.Team{}).Create(&testTeam).Error
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("pass3")
-	err = global.DB.Model(model.Competition{}).Create(&testCompetition).Error
+	err = global.DB.Model(&model.Competition{}).Create(&testCompetition).Error
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("pass4")
-	global.DB.Model(model.Student{}).Find(&testStudent)
-	os.Exit(0)
 }

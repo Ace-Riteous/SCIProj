@@ -55,7 +55,7 @@ func FetchTeamList() (teamList []model.Team, err error) {
 }
 
 func FetchTeamNotFullList() (teamlist []model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Where("isfull = ?", false).Find(&teamlist).Error
+	err = global.DB.Model(&model.Team{}).Where("is_full = ?", false).Find(&teamlist).Error
 	if err != nil {
 		return nil, err
 	}
