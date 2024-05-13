@@ -18,21 +18,21 @@ func GetCompetitionAll() (CompetitionList []model.Competition, err error) {
 }
 
 func AddCompetition(competition *model.Competition) error {
-	if err := global.DB.Create(&competition).Error; err != nil {
+	if err := global.DB.Create(competition).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func CheckCidExist(cid string) (bool, error) {
+func CheckCidExist(cid int) (bool, error) {
 	var competition model.Competition
-	err := global.DB.Model(&model.Competition{}).Where("cid = ?", cid).First(&competition).Error
+	err := global.DB.Model(&model.Competition{}).Where("id = ?", cid).First(&competition).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
 		return true, err
 	}
-	return true, errors.New("CId已存在")
+	return true, errors.New("CID已存在")
 
 }

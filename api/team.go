@@ -6,64 +6,41 @@ import (
 	"SCIProj/service"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"math/rand"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func NewTeam(c *gin.Context) {
-	cid := c.PostForm("cid")
-	rand.Seed(time.Now().UnixNano())
-	maxid := 1000000000
-	minid := 999999999
-	var tid int
-	for {
-		tid = rand.Intn(maxid) + minid
-		isExist, err := service.CheckTeamIdExist("team" + strconv.Itoa(tid))
-		if err != nil {
-			if strings.Compare(err.Error(), "TeamId已存在") == 0 {
-				continue
-			}
-			model.Error(c, err)
-			return
-		}
-		if isExist == false {
-			break
-		}
-	}
-	teamid := "team" + strconv.Itoa(tid)
-	studentNum, err := service.GetStudentNumsByCid(cid)
-	if err != nil {
-		model.Error(c, err)
-		return
-	}
-	isfull, err := service.TeamIsFull(studentNum, teamid)
+	cid, _ := strconv.Atoi(c.PostForm("cid"))
+	member, err := service.GetStudentNumsByCid(cid)
 	if err != nil {
 		model.Error(c, err)
 		return
 	}
 	newTeam := model.Team{
 		Name:       c.PostForm("teamname"),
-		TeamId:     teamid,
 		StudentIds: c.PostForm("studentids"),
 		TeacherId:  c.PostForm("teamteacher"),
-		CId:        cid,
-		IsFull:     isfull,
+		CID:        cid,
 	}
 
+	studentids := strings.Split(newTeam.StudentIds, ",")
+	if len(studentids) > member {
+		model.Error(c, errors.New("队伍人数超过限制"))
+		return
+	}
+	newTeam.IsFull = false
 	err = service.NewTeam(&newTeam)
 	if err != nil {
 		model.Error(c, err)
 		return
-
 	}
 	model.Success(c, newTeam)
 
 }
 
 func JoinTeam(c *gin.Context) {
-	teamid := c.PostForm("teamid")
+	teamid, _ := strconv.Atoi(c.PostForm("teamid"))
 	studentid := c.PostForm("studentid")
 	team, err := service.FetchTeamByTeamId(teamid)
 	if err != nil {
@@ -88,7 +65,7 @@ func JoinTeam(c *gin.Context) {
 		studentList = append(studentList, studentid)
 	}
 	team.StudentIds = strings.Join(studentList, ",")
-	studentNum, err := service.GetStudentNumsByCid(team.CId)
+	studentNum, err := service.GetStudentNumsByCid(team.CID)
 	if err != nil {
 		model.Error(c, err)
 		return

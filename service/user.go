@@ -5,6 +5,7 @@ import (
 	"SCIProj/model"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 func GetTeacherById(teacherId string) (teacher *model.Teacher, err error) {
@@ -23,8 +24,9 @@ func GetStudentById(studentId string) (student *model.Student, err error) {
 	return student, nil
 }
 
-func GetMultyStudentsById(c *gin.Context, studentsid ...string) (student []*model.Student, err error) {
-	for _, id := range studentsid {
+func GetMultyStudentsById(c *gin.Context, studentsid string) (student []*model.Student, err error) {
+	ids := strings.Split(studentsid, ",")
+	for _, id := range ids {
 		s, err := dao.GetStudentById(id)
 		if err != nil {
 			model.Error(c, errors.New("学生: "+id+"不存在"))

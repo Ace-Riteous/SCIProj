@@ -5,7 +5,7 @@ import (
 	"SCIProj/model"
 )
 
-func GetStudentNumsByCid(cid string) (num int, err error) {
+func GetStudentNumsByCid(cid int) (num int, err error) {
 	num, err = dao.GetStudentNumsByCid(cid)
 	if err != nil {
 		return 0, err
@@ -14,7 +14,7 @@ func GetStudentNumsByCid(cid string) (num int, err error) {
 
 }
 
-func TeamIsFull(num int, teamid string) (isfull bool, err error) {
+func TeamIsFull(num int, teamid int) (isfull bool, err error) {
 	isfull, err = dao.TeamIsFull(num, teamid)
 	if err != nil {
 		return false, err
@@ -30,7 +30,7 @@ func NewTeam(newTeam *model.Team) error {
 	return nil
 }
 
-func CheckTeamIdExist(s string) (bool, error) {
+func CheckTeamIdExist(s int) (bool, error) {
 	isExist, err := dao.CheckTeamIdExist(s)
 	if err != nil {
 		return isExist, err
@@ -57,7 +57,7 @@ func FetchTeamNotFullList() (teamlist []model.Team, err error) {
 
 }
 
-func FetchTeamByTeamId(teamid string) (team model.Team, err error) {
+func FetchTeamByTeamId(teamid int) (team model.Team, err error) {
 	team, err = dao.FetchTeamByTeamId(teamid)
 	if err != nil {
 		return team, err

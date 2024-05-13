@@ -32,5 +32,5 @@ func Register(c *gin.Context) {
 		model.Error(c, err)
 		return
 	}
-	model.Success(c, nil)
+	model.Success(c, "register success")
 }

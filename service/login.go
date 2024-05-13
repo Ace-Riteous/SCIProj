@@ -5,13 +5,39 @@ import (
 	"SCIProj/model"
 	"SCIProj/utils"
 	"errors"
+	"fmt"
+	"strings"
 )
 
 func Login(uid string, password string) (data interface{}, err error) {
 	password = utils.Md5Crypt(password)
 	student, err := dao.GetStudent(uid, password)
-	if err != nil {
-		return nil, err
+	errstr := fmt.Sprintf("err: %v", err)
+	if err != nil && strings.Compare(errstr, "record not found") != 0 {
+		teacher, err := dao.GetTeacher(uid, password)
+		errstr = fmt.Sprintf("err: %v", err)
+		if err != nil && strings.Compare(errstr, "record not found") != 0 {
+			return nil, errors.New("该账号未注册/用户名或密码错误")
+		}
+		if teacher != nil {
+			t := model.Teacher{
+				TeacherID:     teacher.TeacherID,
+				Username:      teacher.Username,
+				Email:         teacher.Email,
+				Phone:         teacher.Phone,
+				Role:          teacher.Role,
+				Avatar:        teacher.Avatar,
+				Age:           teacher.Age,
+				MyStudent:     teacher.MyStudent,
+				MyTeam:        teacher.MyTeam,
+				MyCompetition: teacher.MyCompetition,
+			}
+			tlr, err := TeacherLogin(t)
+			if err != nil {
+				return nil, err
+			}
+			return tlr, nil
+		}
 	}
 	if student != nil {
 		s := model.Student{
@@ -32,30 +58,7 @@ func Login(uid string, password string) (data interface{}, err error) {
 		}
 		return slr, nil
 	}
-	teacher, err := dao.GetTeacher(uid, password)
-	if err != nil {
-		return nil, err
-	}
-	if teacher != nil {
-		t := model.Teacher{
-			TeacherID:     teacher.TeacherID,
-			Username:      teacher.Username,
-			Email:         teacher.Email,
-			Phone:         teacher.Phone,
-			Role:          teacher.Role,
-			Avatar:        teacher.Avatar,
-			Age:           teacher.Age,
-			MyStudent:     teacher.MyStudent,
-			MyTeam:        teacher.MyTeam,
-			MyCompetition: teacher.MyCompetition,
-		}
-		tlr, err := TeacherLogin(t)
-		if err != nil {
-			return nil, err
-		}
-		return tlr, nil
-	}
-	return nil, errors.New("该账号未注册/用户名或密码错误")
+	return nil, errors.New("登录错误")
 }
 
 func StudentLogin(student model.Student) (*model.StudentLoginRes, error) {

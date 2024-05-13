@@ -12,12 +12,8 @@ func JWTAuthMiddelware() gin.HandlerFunc {
 		skipList := []string{
 			"/user/login",
 			"/user/register",
-			"/user/home",
-			"/post/see_competition",
-			"/post/add_competition",
-			"/team/get_team_is_not_full",
-			"/team/get_team",
-			"/team/new_team",
+			"/post/competition_all",
+			"/team/team_all",
 		}
 		for _, item := range skipList {
 			if item == c.FullPath() {

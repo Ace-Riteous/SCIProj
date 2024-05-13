@@ -5,7 +5,6 @@ import (
 	"SCIProj/model"
 	"SCIProj/utils"
 	"fmt"
-	"time"
 )
 
 func TestData() {
@@ -36,15 +35,13 @@ func TestData() {
 	}
 
 	testTeam := model.Team{
-		TeamId:     "team1000000001",
 		Name:       "test_team",
 		StudentIds: "2017212210,",
 		TeacherId:  "2017212211",
-		CId:        "1",
+		CID:        1,
 		IsFull:     false,
 	}
 	testCompetition := model.Competition{
-		CId:              "c1000000001",
 		Title:            "test_title",
 		Request:          "test_request",
 		Member:           4,
@@ -55,14 +52,11 @@ func TestData() {
 		CompetitionLink:  "test_link",
 		Teacher:          "test_teacher",
 		Student:          "test_student",
-		CreateTime:       time.Now(),
-		UpdateTime:       time.Now(),
-		DeleteTime:       time.Now(),
 	}
-	global.DB.Unscoped().Delete(&testStudent)
-	global.DB.Unscoped().Delete(&testTeacher)
-	global.DB.Unscoped().Delete(&testTeam)
-	global.DB.Unscoped().Delete(&testCompetition)
+	global.DB.Model(&model.Student{}).Where("student_id=?", "2017212210").Unscoped().Delete(&testStudent)
+	global.DB.Model(&model.Teacher{}).Where("teacher_id=?", "2017212211").Unscoped().Delete(&testTeacher)
+	global.DB.Model(&model.Team{}).Where("c_id=?", "1").Unscoped().Delete(&testTeam)
+	global.DB.Model(&model.Competition{}).Where("teacher=?", "test_teacher").Unscoped().Delete(&testCompetition)
 
 	err := global.DB.Model(&model.Student{}).Create(&testStudent).Error
 	if err != nil {
@@ -84,4 +78,5 @@ func TestData() {
 		fmt.Println(err)
 	}
 	fmt.Println("pass4")
+
 }

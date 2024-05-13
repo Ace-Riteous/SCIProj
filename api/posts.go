@@ -6,10 +6,7 @@ import (
 	"SCIProj/service"
 	"SCIProj/utils"
 	"github.com/gin-gonic/gin"
-	"math/rand"
 	"strconv"
-	"strings"
-	"time"
 )
 
 func GetCompetitionAll(c *gin.Context) {
@@ -33,38 +30,17 @@ func AddCompetition(c *gin.Context) {
 	for _, s := range student {
 		students += s.Username + ","
 	}
-	rand.Seed(time.Now().UnixNano())
-	maxid := 1000000000
-	minid := 999999999
-	var cid int
-	for {
-		cid = rand.Intn(maxid) + minid
-		isExist, err := service.CheckCidExist("c" + strconv.Itoa(cid))
-		if err != nil {
-			if strings.Compare(err.Error(), "CId已存在") == 0 {
-				continue
-			}
-			model.Error(c, err)
-			return
-
-		}
-		if isExist == false {
-			break
-		}
-	}
-	competitionid := "c" + strconv.Itoa(cid)
+	member, _ := strconv.Atoi(c.PostForm("member"))
 	newCompetition := model.Competition{
-		CId:              competitionid,
 		Title:            c.PostForm("title"),
 		Request:          c.PostForm("request"),
+		Member:           member,
 		Content:          c.PostForm("content"),
 		CompetitionTime:  c.PostForm("competitiontime"),
 		CompetitionPlace: c.PostForm("competitionplace"),
 		CompetitionLink:  c.PostForm("competitionlink"),
 		Teacher:          teacher.Username,
-		CreateTime:       time.Now(),
-		UpdateTime:       time.Now(),
-		DeleteTime:       global.EmptyTime,
+		Student:          students,
 	}
 	err := service.AddCompetition(&newCompetition)
 	if err != nil {

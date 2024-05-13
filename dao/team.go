@@ -8,14 +8,18 @@ import (
 	"strings"
 )
 
-func TeamIsFull(num int, teamid string) (bool, error) {
+func TeamIsFull(num int, teamid int) (bool, error) {
 	var team model.Team
-	err := global.DB.Model(&model.Team{}).Where("teamid = ?", teamid).First(&team).Error
+	err := global.DB.Model(&model.Team{}).Where("id = ?", teamid).First(&team).Error
 	if err != nil {
 		return false, err
 	}
 	studentList := strings.Split(team.StudentIds, ",")
 	if len(studentList) == num {
+		err := global.DB.Model(&model.Team{}).Where("id = ?", teamid).Update("is_full", true).Error
+		if err != nil {
+			return true, err
+		}
 		return true, nil
 	}
 	return false, err
@@ -29,9 +33,9 @@ func NewTeam(team *model.Team) error {
 	return nil
 }
 
-func CheckTeamIdExist(s string) (bool, error) {
+func CheckTeamIdExist(s int) (bool, error) {
 	var team model.Team
-	err := global.DB.Model(&model.Team{}).Where("teamid = ?", s).First(&team).Error
+	err := global.DB.Model(&model.Team{}).Where("id = ?", s).First(&team).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil
@@ -65,8 +69,8 @@ func FetchTeamNotFullList() (teamlist []model.Team, err error) {
 	return teamlist, nil
 }
 
-func FetchTeamByTeamId(teamid string) (team model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Where("teamid = ?", teamid).First(&team).Error
+func FetchTeamByTeamId(teamid int) (team model.Team, err error) {
+	err = global.DB.Model(&model.Team{}).Where("id = ?", teamid).First(&team).Error
 	if err != nil {
 		return team, err
 	}
@@ -74,7 +78,7 @@ func FetchTeamByTeamId(teamid string) (team model.Team, err error) {
 }
 
 func UpdateTeam(team model.Team) error {
-	err := global.DB.Model(&model.Team{}).Where("teamid = ?", team.TeamId).Updates(&team).Error
+	err := global.DB.Model(&model.Team{}).Where("id = ?", team.ID).Updates(&team).Error
 	if err != nil {
 		return err
 	}
