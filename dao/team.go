@@ -47,7 +47,7 @@ func CheckTeamIdExist(s int) (bool, error) {
 }
 
 func FetchTeamList() (teamList []model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Find(&teamList).Error
+	err = global.DB.Model(&model.Team{}).Find(&teamList).Limit(10).Error
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func FetchTeamList() (teamList []model.Team, err error) {
 }
 
 func FetchTeamNotFullList() (teamlist []model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Where("is_full = ?", false).Find(&teamlist).Error
+	err = global.DB.Model(&model.Team{}).Where("is_full = ?", false).Find(&teamlist).Limit(10).Error
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 
 func Login(c *gin.Context) {
 	//接收用户名密码
-	uid := c.PostForm("uid")
+	uid := c.PostForm("sevenid")
 	password := c.PostForm("password")
 	loginRes, err := service.Login(uid, password)
 	if err != nil {

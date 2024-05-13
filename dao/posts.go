@@ -8,7 +8,7 @@ import (
 )
 
 func GetCompetitionAll() (CompetitionList []model.Competition, err error) {
-	if err = global.DB.Model(&model.Competition{}).Limit(10).Find(&CompetitionList).Error; err != nil {
+	if err = global.DB.Model(&model.Competition{}).Limit(10).Find(&CompetitionList).Limit(10).Error; err != nil {
 		return nil, err
 	}
 	if len(CompetitionList) == 0 {

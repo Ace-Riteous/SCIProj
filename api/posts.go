@@ -24,12 +24,7 @@ func AddCompetition(c *gin.Context) {
 	//获取学生和教师信息，教师信息可以从token中获取，学生信息需要从前端传入
 	token := c.GetHeader("Authorization")
 	_, claim, _ := utils.ParseToken(token)
-	student, _ := service.GetMultyStudentsById(c, c.PostForm("studentid"))
 	teacher, _ := service.GetTeacherById(claim.Uid)
-	var students string
-	for _, s := range student {
-		students += s.Username + ","
-	}
 	member, _ := strconv.Atoi(c.PostForm("member"))
 	newCompetition := model.Competition{
 		Title:            c.PostForm("title"),
@@ -40,7 +35,6 @@ func AddCompetition(c *gin.Context) {
 		CompetitionPlace: c.PostForm("competitionplace"),
 		CompetitionLink:  c.PostForm("competitionlink"),
 		Teacher:          teacher.Username,
-		Student:          students,
 	}
 	err := service.AddCompetition(&newCompetition)
 	if err != nil {

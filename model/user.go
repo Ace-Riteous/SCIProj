@@ -13,7 +13,7 @@ type Student struct {
 	Age       int    `gorm:"type:int;comment:年龄" json:"age"`
 	SevenID   string `gorm:"type:varchar(10);default:null;comment:统一认证码" json:"sevenid"`
 	StudentID string `gorm:"type:varchar(20);comment:学号" json:"studentid"`
-	MyTeacher string `gorm:"type:longtext;comment:指导老师" json:"my_teacher"`
+	MyTeacher string `gorm:"type:longtext;comment:指导老师" json:"myteacher"`
 }
 
 type Teacher struct {

@@ -25,7 +25,7 @@ func Register(c *gin.Context) {
 		Age:       age,
 		SevenID:   c.PostForm("sevenid"),
 		StudentID: c.PostForm("studentid"),
-		MyTeacher: c.PostForm("my_teacher"),
+		MyTeacher: c.PostForm("myteacher"),
 	}
 	err = service.Register(newStudent)
 	if err != nil {
