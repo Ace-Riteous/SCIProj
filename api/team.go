@@ -1,106 +1,122 @@
 package api
 
 import (
-	"SCIProj/global"
-	"SCIProj/model"
+	"SCIProj/dto"
 	"SCIProj/service"
-	"errors"
 	"github.com/gin-gonic/gin"
-	"strconv"
-	"strings"
 )
 
-func NewTeam(c *gin.Context) {
-	cid, _ := strconv.Atoi(c.PostForm("cid"))
-	member, err := service.GetStudentNumsByCid(cid)
-	if err != nil {
-		model.Error(c, err)
-		return
+var teamApi *TeamApi
+
+type TeamApi struct {
+	BaseApi
+	Service *service.TeamService
+}
+
+func NewTeamApi() TeamApi {
+	return TeamApi{
+		NewBaseApi(),
+		service.NewTeamService(),
 	}
-	newTeam := model.Team{
-		Name:       c.PostForm("teamname"),
-		StudentIds: c.PostForm("studentids"),
-		TeacherId:  c.PostForm("teamteacher"),
-		CID:        cid,
+}
+
+func (m TeamApi) GetTeamAll(c *gin.Context) {
+	var iTeamAllDTO dto.TeamAllDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iTeamAllDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
 	}
 
-	studentids := strings.Split(newTeam.StudentIds, ",")
-	if len(studentids) > member {
-		model.Error(c, errors.New("队伍人数超过限制"))
-		return
-	}
-	newTeam.IsFull = false
-	err = service.NewTeam(&newTeam)
+	teamList, nTotal, err := m.Service.GetTeamAll(iTeamAllDTO)
 	if err != nil {
-		model.Error(c, err)
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
 		return
 	}
-	model.Success(c, newTeam)
+
+	m.OK(ResponseJson{
+		Data:  teamList,
+		Total: nTotal,
+	})
+}
+
+func (m TeamApi) GetTeamNotFull(c *gin.Context) {
+	var iTeamNotFullDTO dto.TeamAllDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iTeamNotFullDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
+
+	teamList, nTotal, err := m.Service.GetTeamNotFull(iTeamNotFullDTO)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Data:  teamList,
+		Total: nTotal,
+	})
+}
+
+func (m TeamApi) NewTeam(c *gin.Context) {
+	var iTeamAddDTO dto.TeamAddDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iTeamAddDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
+
+	token := c.GetHeader("Authorization")
+	err := m.Service.NewTeam(iTeamAddDTO, token)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Msg: "new team success",
+	})
 
 }
 
-func JoinTeam(c *gin.Context) {
-	teamid, _ := strconv.Atoi(c.PostForm("teamid"))
-	studentid := c.PostForm("studentid")
-	team, err := service.FetchTeamByTeamId(teamid)
-	if err != nil {
-		model.Error(c, err)
+func (m TeamApi) JoinTeam(c *gin.Context) {
+	var iTeamJoinDTO dto.TeamJoinDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iTeamJoinDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
 		return
 	}
-	if team.IsFull {
-		model.Error(c, errors.New("队伍已满员"))
-		return
-	}
-	studentList := make([]string, 0)
-	if team.StudentIds != "" {
-		studentList = strings.Split(team.StudentIds, ",")
-		for _, v := range studentList {
-			if strings.Compare(v, studentid) == 0 {
-				model.Error(c, errors.New("学生"+studentid+"已在队伍中"))
-				return
-			}
-		}
-		studentList = append(studentList, studentid)
-	} else {
-		studentList = append(studentList, studentid)
-	}
-	team.StudentIds = strings.Join(studentList, ",")
-	studentNum, err := service.GetStudentNumsByCid(team.CID)
-	if err != nil {
-		model.Error(c, err)
-		return
-	}
-	isfull, err := service.TeamIsFull(studentNum, teamid)
-	if err != nil {
-		model.Error(c, err)
-		return
-	}
-	team.IsFull = isfull
-	err = service.UpdateTeam(team)
-	if err != nil {
-		model.Error(c, err)
-		return
-	}
-	model.Success(c, team)
-}
 
-func GetTeamAll(c *gin.Context) {
-	//无需判断登陆状态即可使用
-	TeamList, err := service.FetchTeamList()
+	token := c.GetHeader("Authorization")
+	err := m.Service.JoinTeam(iTeamJoinDTO, token)
 	if err != nil {
-		model.Error(c, err)
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
 		return
 	}
-	global.REDIS.Set("TeamList", TeamList, 0)
-	model.Success(c, TeamList)
-}
 
-func GetTeamNotFull(c *gin.Context) {
-	TeamList, err := service.FetchTeamNotFullList()
-	if err != nil {
-		model.Error(c, err)
-		return
-	}
-	global.REDIS.Set("TeamNotFullList", TeamList, 0)
-	model.Success(c, TeamList)
+	m.OK(ResponseJson{
+		Msg: "join team success",
+	})
 }

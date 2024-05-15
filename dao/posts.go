@@ -1,38 +1,58 @@
 package dao
 
 import (
-	"SCIProj/global"
+	"SCIProj/dto"
 	"SCIProj/model"
-	"errors"
-	"gorm.io/gorm"
 )
 
-func GetCompetitionAll() (CompetitionList []model.Competition, err error) {
-	if err = global.DB.Model(&model.Competition{}).Limit(10).Find(&CompetitionList).Limit(10).Error; err != nil {
-		return nil, err
-	}
-	if len(CompetitionList) == 0 {
-		return nil, errors.New("没有查询到比赛信息")
-	}
-	return CompetitionList, nil
+var postDao *PostDao
+
+type PostDao struct {
+	BaseDao
 }
 
-func AddCompetition(competition *model.Competition) error {
-	if err := global.DB.Create(competition).Error; err != nil {
+func NewPostDao() *PostDao {
+	if postDao == nil {
+		postDao = &PostDao{
+			NewBaseDao(),
+		}
+	}
+	return postDao
+}
+
+func (m PostDao) GetCompetitionAll(page int, limit int) ([]model.Competition, int64, error) {
+	var competitionList []model.Competition
+	var nTotal int64
+	err := m.Orm.Model(&model.Competition{}).
+		Count(&nTotal).
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&competitionList).
+		Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return competitionList, nTotal, nil
+}
+
+func (m PostDao) CheckIsTeacher(uid int64) bool {
+	var teacher model.Teacher
+	err := m.Orm.Model(&model.Teacher{}).
+		Where("seven_id = ?", uid).
+		First(&teacher).
+		Error
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func (m PostDao) AddCompetition(dto dto.CompetitionAddDTO) error {
+	var competition model.Competition
+	competition = dto.Convert()
+	if err := m.Orm.Model(&model.Competition{}).Save(&competition).Error; err != nil {
 		return err
 	}
 	return nil
-}
-
-func CheckCidExist(cid int) (bool, error) {
-	var competition model.Competition
-	err := global.DB.Model(&model.Competition{}).Where("id = ?", cid).First(&competition).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
-		}
-		return true, err
-	}
-	return true, errors.New("CID已存在")
 
 }

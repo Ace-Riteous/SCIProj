@@ -5,6 +5,11 @@
 jwt:
   signing-key: 'sciproj'
 
+token:
+  ExpiresDays: 30  #过期时间分钟
+
+custom:
+  prefix: sci_
 
 # zap logger configuration
 zap:

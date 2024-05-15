@@ -7,20 +7,8 @@ import (
 	"net/http"
 )
 
-func JWTAuthMiddelware() gin.HandlerFunc {
+func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		skipList := []string{
-			"/user/login",
-			"/user/register",
-			"/post/competition_all",
-			"/team/team_all",
-		}
-		for _, item := range skipList {
-			if item == c.FullPath() {
-				c.Next()
-				return
-			}
-		}
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})

@@ -1,37 +1,108 @@
 package api
 
 import (
-	"SCIProj/model"
+	"SCIProj/dto"
 	"SCIProj/service"
-	"errors"
+	"SCIProj/utils"
 	"github.com/gin-gonic/gin"
 )
 
-func GetUserInfo(c *gin.Context) {
-	//获取用户信息
-	StudentID := c.PostForm("studentid")
-	TeacherID := c.PostForm("teacherid")
-	if StudentID != "" {
-		student, err := service.GetStudentById(StudentID)
-		if err != nil {
-			model.Error(c, err)
-		}
-		if student == nil {
-			model.Error(c, errors.New("学生不存在！"))
-		}
-		model.Success(c, student)
+type UserApi struct {
+	BaseApi
+	Service *service.UserService
+}
+
+func NewUserApi() UserApi {
+
+	return UserApi{
+		NewBaseApi(),
+		service.NewUserService(),
+	}
+}
+
+func (m *UserApi) Login(c *gin.Context) {
+	var iUserLoginDTO dto.UserLoginDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iUserLoginDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
 		return
 	}
-	if TeacherID != "" {
-		teacher, err := service.GetTeacherById(TeacherID)
-		if err != nil {
-			model.Error(c, err)
-		}
-		if teacher == nil {
-			model.Error(c, errors.New("教师不存在！"))
-		}
-		model.Success(c, teacher)
+
+	token, err := m.Service.Login(iUserLoginDTO)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
 		return
 	}
-	model.Error(c, errors.New("ID不能为空！"))
+
+	type reData struct {
+		SevenID int64  `json:"seven_id"`
+		Token   string `json:"token"`
+	}
+	m.OK(ResponseJson{
+		Msg: "Login success",
+		Data: reData{
+			SevenID: iUserLoginDTO.SevenID,
+			Token:   token,
+		},
+	})
+
+}
+
+func (m *UserApi) Register(c *gin.Context) {
+	var iUserRegisterDTO dto.UserRegisterDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iUserRegisterDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
+
+	err := m.Service.Register(iUserRegisterDTO)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	m.OK(ResponseJson{
+		Msg: "Register success",
+	})
+
+}
+
+func (m *UserApi) GetUserInfo(c *gin.Context) {
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx: c,
+	}).GetError(); err != nil {
+		return
+	}
+	t := c.GetHeader("Authorization")
+	_, claims, err := utils.ParseToken(t)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	user, err := m.Service.GetUserInfo(claims)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Data: user.SevenID,
+	})
+
 }

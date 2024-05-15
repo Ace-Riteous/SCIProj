@@ -1,57 +1,70 @@
 package dao
 
 import (
-	"SCIProj/global"
+	"SCIProj/dto"
 	"SCIProj/model"
-	"errors"
 )
 
-func GetStudent(uid string, password string) (student *model.Student, err error) {
-	err = global.DB.Model(model.Student{}).Where("student_id = ? AND password = ?", uid, password).First(&student).Error
-	if err != nil {
-		return nil, err
-	}
-	return student, nil
+var userDao *UserDao
+
+type UserDao struct {
+	BaseDao
 }
 
-func GetTeacher(uid string, password string) (teacher *model.Teacher, err error) {
-	err = global.DB.Model(model.Teacher{}).Where("teacher_id = ? AND password = ?", uid, password).First(&teacher).Error
-	if err != nil {
-		return nil, err
+// NewUserDao 创建实例和返回
+func NewUserDao() *UserDao {
+	if userDao == nil {
+		userDao = &UserDao{
+			NewBaseDao(),
+		}
 	}
-	return teacher, nil
+	return userDao
 }
 
-func GetTeacherById(id string) (teacher *model.Teacher, err error) {
-	err = global.DB.Model(model.Teacher{}).Where("teacher_id = ?", id).First(&teacher).Error
+func (m UserDao) CheckIsStudent(dto dto.UserLoginDTO) (model.Student, bool) {
+	var student model.Student
+	err := m.Orm.Model(&model.Student{}).
+		Where("seven_id=?", dto.SevenID).
+		First(&student).
+		Error
 	if err != nil {
-		return nil, err
+		return model.Student{}, false
 	}
-	return teacher, nil
+	return student, true
 }
 
-func GetStudentById(id string) (student *model.Student, err error) {
-	err = global.DB.Model(model.Student{}).Where("student_id = ?", id).First(&student).Error
+func (m UserDao) CheckIsTeacher(dto dto.UserLoginDTO) (model.Teacher, bool) {
+	var teacher model.Teacher
+	err := m.Orm.Model(&model.Teacher{}).
+		Where("seven_id=?", dto.SevenID).
+		First(&teacher).
+		Error
 	if err != nil {
-		return nil, err
+		return model.Teacher{}, false
 	}
-	return student, nil
+	return teacher, true
 }
 
-func Register(student model.Student) error {
-	err := global.DB.Model(model.Student{}).Create(&student).Error
+func (m UserDao) RegisterUser(registerDTO dto.UserRegisterDTO) error {
+	var user model.Student
+	registerDTO.ConvertToModel(&user)
+	err := m.Orm.Save(&user).Error
 	if err != nil {
-		return errors.New("注册失败")
+		return err
 	}
 	return nil
+
 }
 
-func GetStudentNumsByCid(cid int) (num int, err error) {
-	var competition model.Competition
-	err = global.DB.Model(&model.Competition{}).Where("id = ?", cid).First(&competition).Error
+func (m UserDao) GetStudentBySevenID(i int64) (model.Student, error) {
+	var student model.Student
+	err := m.Orm.Model(&model.Student{}).
+		Where("seven_id=?", i).
+		First(&student).
+		Error
 	if err != nil {
-		return 0, err
+		return model.Student{}, err
 	}
-	num = competition.Member
-	return num, nil
+	return student, nil
+
 }

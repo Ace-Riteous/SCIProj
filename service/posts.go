@@ -2,29 +2,62 @@ package service
 
 import (
 	"SCIProj/dao"
+	"SCIProj/dto"
 	"SCIProj/model"
+	"SCIProj/utils"
+	"errors"
+	"strconv"
 )
 
-func FetchCompetitionList() (CompetitionList []model.Competition, err error) {
-	CompetitionList, err = dao.GetCompetitionAll()
-	if err != nil {
-		return nil, err
-	}
-	return CompetitionList, nil
+var postService *PostService
+
+type PostService struct {
+	BaseService
+	Dao *dao.PostDao
 }
 
-func AddCompetition(competition *model.Competition) error {
-	err := dao.AddCompetition(competition)
+func NewPostService() *PostService {
+	if postService == nil {
+		postService = &PostService{
+			Dao: dao.NewPostDao(),
+		}
+	}
+	return postService
+}
+
+func (m PostService) GetCompetitionAll(dto dto.CompetitionAllDTO) ([]model.Competition, int64, error) {
+	if err := dto.Validate(); err != nil {
+		return nil, 0, err
+	}
+	page, limit := dto.Page, dto.PageSize
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 20 {
+		limit = 10
+	}
+	competitionList, nTotal, err := m.Dao.GetCompetitionAll(page, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+	return competitionList, nTotal, nil
+}
+
+func (m PostService) AddCompetition(addDTO dto.CompetitionAddDTO, token string) error {
+	if err := addDTO.Validate(); err != nil {
+		return err
+	}
+	_, claims, err := utils.ParseToken(token)
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func CheckCidExist(cid int) (bool, error) {
-	isExist, err := dao.CheckCidExist(cid)
+	uid, err := strconv.Atoi(claims.Uid)
 	if err != nil {
-		return isExist, err
+		return err
 	}
-	return isExist, nil
+	if m.Dao.CheckIsTeacher(int64(uid)) {
+		return m.Dao.AddCompetition(addDTO)
+	} else {
+		return errors.New("Only teacher can add competition")
+	}
 }

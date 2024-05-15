@@ -1,87 +1,116 @@
 package dao
 
 import (
-	"SCIProj/global"
+	"SCIProj/dto"
 	"SCIProj/model"
 	"errors"
-	"gorm.io/gorm"
-	"strings"
 )
 
-func TeamIsFull(num int, teamid int) (bool, error) {
+var teamDao *TeamDao
+
+type TeamDao struct {
+	BaseDao
+}
+
+func NewTeamDao() *TeamDao {
+	if teamDao == nil {
+		teamDao = &TeamDao{
+			NewBaseDao(),
+		}
+	}
+	return teamDao
+}
+
+func (m TeamDao) GetTeamAll(page int, size int) ([]model.Team, int64, error) {
+	var teamList []model.Team
+	var nTotal int64
+	err := m.Orm.Model(&model.Team{}).
+		Count(&nTotal).
+		Offset((page - 1) * size).
+		Limit(size).
+		Find(&teamList).
+		Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return teamList, nTotal, nil
+}
+
+func (m TeamDao) GetTeamNotFull(page int, limit int) ([]model.Team, int64, error) {
+	var teamList []model.Team
+	var nTotal int64
+	err := m.Orm.Model(&model.Team{}).
+		Where("is_full = ?", false).
+		Count(&nTotal).
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&teamList).
+		Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return teamList, nTotal, nil
+
+}
+
+func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid int64) error {
 	var team model.Team
-	err := global.DB.Model(&model.Team{}).Where("id = ?", teamid).First(&team).Error
+	team = dto.Convert(uid, false)
+	if err := m.Orm.Model(&model.Team{}).Save(&team).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid int64) error {
+	var team, team1 model.Team
+	err := m.Orm.Model(&model.Team{}).Where("id = ?", joinDTO.TeamID).First(&team).Error
+	if err != nil {
+		return err
+	}
+	team.IsFull, err = m.TeamIsFull(joinDTO.TeamID)
+	if err != nil {
+		return err
+	}
+	if team.IsFull {
+		return errors.New("team is full")
+	}
+	{
+		team1.Name = team.Name
+		team1.TeacherID = team.TeacherID
+		team1.CID = team.CID
+		team1.StudentID = uid
+		team1.IsFull = team.IsFull
+	}
+	err = m.Orm.Model(&model.Team{}).Create(&team1).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m TeamDao) TeamIsFull(id int) (bool, error) {
+	var post model.Competition
+	var team model.Team
+	var nTotal int64
+	err := m.Orm.Model(&model.Team{}).Where("id = ?", id).First(&team).Error
 	if err != nil {
 		return false, err
 	}
-	studentList := strings.Split(team.StudentIds, ",")
-	if len(studentList) == num {
-		err := global.DB.Model(&model.Team{}).Where("id = ?", teamid).Update("is_full", true).Error
-		if err != nil {
-			return true, err
-		}
+	err = m.Orm.Model(&model.Competition{}).Where("id = ?", team.CID).First(&post).Error
+	if err != nil {
+		return false, err
+	}
+	err = m.Orm.Model(&model.Team{}).
+		Where("c_id = ? and teacher_id = ? and team_name =?", team.CID, team.TeacherID, team.Name).
+		Count(&nTotal).
+		Error
+	if err != nil {
+		return false, err
+	}
+	if int(nTotal) >= post.Member {
+		err = m.Orm.Model(&model.Team{}).Where("id = ?", id).Update("is_full", true).Error
 		return true, nil
 	}
-	return false, err
-}
-
-func NewTeam(team *model.Team) error {
-	err := global.DB.Model(&model.Team{}).Create(&team).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func CheckTeamIdExist(s int) (bool, error) {
-	var team model.Team
-	err := global.DB.Model(&model.Team{}).Where("id = ?", s).First(&team).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
-		}
-		return true, err
-	}
-	return true, errors.New("TeamId已存在")
-
-}
-
-func FetchTeamList() (teamList []model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Find(&teamList).Limit(10).Error
-	if err != nil {
-		return nil, err
-	}
-	if len(teamList) == 0 {
-		return nil, errors.New("没有查询到队伍信息")
-	}
-	return teamList, nil
-
-}
-
-func FetchTeamNotFullList() (teamlist []model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Where("is_full = ?", false).Find(&teamlist).Limit(10).Error
-	if err != nil {
-		return nil, err
-	}
-	if len(teamlist) == 0 {
-		return nil, errors.New("所有队伍已满员")
-	}
-	return teamlist, nil
-}
-
-func FetchTeamByTeamId(teamid int) (team model.Team, err error) {
-	err = global.DB.Model(&model.Team{}).Where("id = ?", teamid).First(&team).Error
-	if err != nil {
-		return team, err
-	}
-	return team, nil
-}
-
-func UpdateTeam(team model.Team) error {
-	err := global.DB.Model(&model.Team{}).Where("id = ?", team.ID).Updates(&team).Error
-	if err != nil {
-		return err
-	}
-	return nil
-
+	return false, nil
 }
