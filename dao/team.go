@@ -53,7 +53,7 @@ func (m TeamDao) GetTeamNotFull(page int, limit int) ([]model.Team, int64, error
 
 }
 
-func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid int64) error {
+func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid string) error {
 	var team model.Team
 	team = dto.Convert(uid, false)
 	if err := m.Orm.Model(&model.Team{}).Save(&team).Error; err != nil {
@@ -62,7 +62,7 @@ func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid int64) error {
 	return nil
 }
 
-func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid int64) error {
+func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid string) error {
 	var team, team1 model.Team
 	err := m.Orm.Model(&model.Team{}).Where("id = ?", joinDTO.TeamID).First(&team).Error
 	if err != nil {

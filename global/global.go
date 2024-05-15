@@ -13,6 +13,6 @@ var (
 	VP     *viper.Viper
 	CONFIG *config.Server
 	LOG    *zap.Logger
-	RC     *redis.Client
+	REDIS  *redis.Client
 	JWTKey []byte
 )

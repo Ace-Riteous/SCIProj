@@ -2,18 +2,13 @@ package core
 
 import (
 	"SCIProj/initialize"
+	"SCIProj/router"
 	"SCIProj/service"
-	"log"
 )
 
 func RunWindowsServer(Addr string) {
+	go service.ServerHealthCheck()
 	initialize.Redis()
 	initialize.JWTANDMD()
-	//初始化一条数据，方便测试
-	//initialize.TestData()
-	r := initialize.Routers()
-	go service.HealthCheck()
-	if err := r.Run(Addr); err != nil {
-		log.Fatal("Server start failed!")
-	}
+	router.InitRouter()
 }

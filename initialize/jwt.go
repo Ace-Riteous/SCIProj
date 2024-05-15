@@ -7,5 +7,4 @@ import (
 func JWTANDMD() {
 	secret := global.VP.GetString("jwt.signing-key")
 	global.JWTKey = []byte(secret)
-	global.MD5SALT = secret
 }

@@ -73,7 +73,7 @@ func (m TeamService) NewTeam(addDTO dto.TeamAddDTO, token string) error {
 	if err != nil {
 		return err
 	}
-	return m.Dao.NewTeam(addDTO, int64(uid))
+	return m.Dao.NewTeam(addDTO, strconv.Itoa(uid))
 }
 
 func (m TeamService) JoinTeam(joinDTO dto.TeamJoinDTO, token string) error {
@@ -88,6 +88,6 @@ func (m TeamService) JoinTeam(joinDTO dto.TeamJoinDTO, token string) error {
 	if err != nil {
 		return err
 	}
-	return m.Dao.JoinTeam(joinDTO, int64(uid))
+	return m.Dao.JoinTeam(joinDTO, strconv.Itoa(uid))
 
 }

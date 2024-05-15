@@ -17,7 +17,7 @@ func (m *TeamAllDTO) Validate() error {
 
 type TeamAddDTO struct {
 	TeamName  string `json:"team_name" form:"team_name" validate:"required"`
-	TeacherID int64  `json:"teacher_id" form:"teacher_id" validate:"required,number"`
+	TeacherID string `json:"teacher_id" form:"teacher_id" validate:"required,len=7"`
 	CID       uint   `json:"c_id" form:"c_id" validate:"required,number"`
 }
 
@@ -26,7 +26,7 @@ func (m *TeamAddDTO) Validate() error {
 	return validate.Struct(m)
 }
 
-func (m *TeamAddDTO) Convert(stuID int64, isFull bool) model.Team {
+func (m *TeamAddDTO) Convert(stuID string, isFull bool) model.Team {
 	return model.Team{
 		Name:      m.TeamName,
 		TeacherID: m.TeacherID,

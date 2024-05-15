@@ -3,6 +3,7 @@ package dao
 import (
 	"SCIProj/dto"
 	"SCIProj/model"
+	"strconv"
 )
 
 var userDao *UserDao
@@ -59,7 +60,7 @@ func (m UserDao) RegisterUser(registerDTO dto.UserRegisterDTO) error {
 func (m UserDao) GetStudentBySevenID(i int64) (model.Student, error) {
 	var student model.Student
 	err := m.Orm.Model(&model.Student{}).
-		Where("seven_id=?", i).
+		Where("seven_id=?", strconv.FormatInt(i, 10)).
 		First(&student).
 		Error
 	if err != nil {

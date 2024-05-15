@@ -40,7 +40,7 @@ func (m *UserApi) Login(c *gin.Context) {
 	}
 
 	type reData struct {
-		SevenID int64  `json:"seven_id"`
+		SevenID string `json:"seven_id"`
 		Token   string `json:"token"`
 	}
 	m.OK(ResponseJson{

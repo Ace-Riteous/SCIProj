@@ -7,3 +7,5 @@
 out
 gen
 /log/
+!/service_log/
+!/user_log/

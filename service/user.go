@@ -3,13 +3,10 @@ package service
 import (
 	"SCIProj/dao"
 	"SCIProj/dto"
-	"SCIProj/global"
 	"SCIProj/model"
 	"SCIProj/utils"
 	"errors"
-	"github.com/spf13/viper"
 	"strconv"
-	"time"
 )
 
 var userService *UserService
@@ -39,21 +36,23 @@ func (m UserService) Login(dto dto.UserLoginDTO) (string, error) {
 			return "", errors.New("User not found")
 		} else {
 			if utils.CompareHashAndPassword(teacher.Password, dto.Password) {
-				uid := strconv.Itoa(int(teacher.SevenID))
-				token, err := GenerateAndCacheToken(uid)
+				uid := teacher.SevenID
+				token, err := utils.Award(uid)
 				if err != nil {
 					return "", err
 				}
+				go UserHealthCheck(teacher.SevenID)
 				return token, nil
 			}
 		}
 	} else {
 		if utils.CompareHashAndPassword(student.Password, dto.Password) {
-			uid := strconv.Itoa(int(student.SevenID))
-			token, err := GenerateAndCacheToken(uid)
+			uid := student.SevenID
+			token, err := utils.Award(uid)
 			if err != nil {
 				return "", err
 			}
+			go UserHealthCheck(student.SevenID)
 			return token, nil
 		}
 	}
@@ -64,10 +63,17 @@ func (m UserService) Register(registerDTO dto.UserRegisterDTO) error {
 	if err := registerDTO.Validate(); err != nil {
 		return err
 	}
+	_, ok := m.Dao.CheckIsStudent(dto.UserLoginDTO{SevenID: registerDTO.SevenID})
+	if ok {
+		return errors.New("User already exists")
+	}
+
+	registerDTO.Password, _ = utils.Encrypt(registerDTO.Password)
 	err := m.Dao.RegisterUser(registerDTO)
 	if err != nil {
 		return err
 	}
+	go UserHealthCheck(registerDTO.SevenID)
 	return nil
 }
 
@@ -81,18 +87,5 @@ func (m UserService) GetUserInfo(claims *utils.Claims) (model.Student, error) {
 		return model.Student{}, err
 	}
 	return student, nil
-
-}
-
-func GenerateAndCacheToken(nUserID string) (string, error) {
-
-	token, err := utils.Award(nUserID)
-	if err == nil {
-		rdKey := utils.GeneralRedisKey(utils.LoginRedisKey, "{id}", nUserID, viper.GetString("custom.prefix"))
-	_:
-		global.RC.Set(rdKey, token, viper.GetDuration("token.ExpiresDays")*time.Minute*24*60)
-	}
-
-	return token, nil
 
 }
