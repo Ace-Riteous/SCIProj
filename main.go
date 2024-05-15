@@ -21,5 +21,5 @@ func main() {
 		}
 	}()
 
-	core.RunWindowsServer("127.0.0.1:8090")
+	core.RunWindowsServer()
 }

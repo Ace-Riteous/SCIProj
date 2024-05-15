@@ -6,7 +6,7 @@ import (
 	"SCIProj/service"
 )
 
-func RunWindowsServer(Addr string) {
+func RunWindowsServer() {
 	go service.ServerHealthCheck()
 	initialize.Redis()
 	initialize.JWTANDMD()
