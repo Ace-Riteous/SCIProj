@@ -26,7 +26,7 @@ zap:
 
 # mysql connect configuration
 mysql:
-  path: '127.0.0.1:3306'
+  path: '0.0.0.0:3306'
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
   db-name: 'SCIProj'
   username: 'root'

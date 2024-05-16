@@ -4,14 +4,13 @@ import (
 	"SCIProj/initialize"
 	"SCIProj/router"
 	"SCIProj/service"
-	"fmt"
-	"time"
 )
 
 func RunWindowsServer() {
 	go service.ServerHealthCheck()
 	initialize.Redis()
 	initialize.JWTANDMD()
-	fmt.Println(time.Now().Unix())
+	//调试时使用：打印当前时间的int64值
+	//fmt.Println(time.Now().Unix())
 	router.InitRouter()
 }
