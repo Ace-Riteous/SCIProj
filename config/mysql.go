@@ -1,7 +1,8 @@
 package config
 
 type Mysql struct {
-	Path         string `mapstructure:"path" json:"path" yaml:"path"`
+	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Port         string `mapstructure:"port" json:"path" yaml:"port"`
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`
 	Dbname       string `mapstructure:"db-name" json:"dbname" yaml:"db-name"`
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`
