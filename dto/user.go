@@ -7,7 +7,7 @@ import (
 
 type UserLoginDTO struct {
 	SevenID  string `json:"seven_id" form:"seven_id" validate:"required,len=7"`
-	Password string `json:"password" form:"password" validate:"required,min=6,max=20"`
+	Password string `form:"password" validate:"required,min=6,max=20"`
 }
 
 func (m *UserLoginDTO) Validate() error {
@@ -18,8 +18,8 @@ func (m *UserLoginDTO) Validate() error {
 type UserRegisterDTO struct {
 	Username   string `json:"username" form:"username" validate:"required,min=2,max=20"`
 	SevenID    string `json:"seven_id" form:"seven_id" validate:"required,len=7"`
-	Password   string `json:"password" form:"password" validate:"required,min=6,max=20"`
-	RePassword string `json:"re_password" form:"re_password" validate:"required,eqfield=Password"`
+	Password   string `form:"password" validate:"required,min=6,max=20"`
+	RePassword string `form:"re_password" validate:"required,eqfield=Password"`
 	StudentID  string `json:"student_id" form:"student_id" validate:"required,len=10"`
 }
 

@@ -23,7 +23,7 @@ type CompetitionAddDTO struct {
 	Content          string `json:"content" form:"content" validate:"required"`
 	CompetitionTime  int64  `json:"competition_time" form:"competition_time" validate:"required,number"`
 	CompetitionPlace string `json:"competition_place" form:"competition_place" validate:"required"`
-	CompetitionLink  string `json:"competition_link" form:"competition_link" validate:"required"`
+	CompetitionLink  string `json:"competition_link" form:"competition_link" validate:"required,url"`
 }
 
 func (m *CompetitionAddDTO) Validate() error {

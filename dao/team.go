@@ -56,10 +56,25 @@ func (m TeamDao) GetTeamNotFull(page int, limit int) ([]model.Team, int64, error
 func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid string) error {
 	var team model.Team
 	team = dto.Convert(uid, false)
+	if CheckHasTeamed(team) {
+		return errors.New("every student can only create one team in one competition")
+	}
 	if err := m.Orm.Model(&model.Team{}).Save(&team).Error; err != nil {
 		return err
 	}
 	return nil
+}
+
+func CheckHasTeamed(team model.Team) bool {
+	var tempTeam model.Team
+	err := teamDao.Orm.Model(&model.Team{}).
+		Where("c_id = ? and student_id = ?", team.CID, team.StudentID).
+		First(&tempTeam).
+		Error
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid string) error {
@@ -75,11 +90,15 @@ func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid string) error {
 	if team.IsFull {
 		return errors.New("team is full")
 	}
+	if CheckInTeam(joinDTO.TeamID, uid) {
+		return errors.New("you are already in the team")
+	}
 	{
-		team1.Name = team.Name
+		team1.TeamName = team.TeamName
 		team1.TeacherID = team.TeacherID
 		team1.CID = team.CID
 		team1.StudentID = uid
+		team1.LeaderID = team.LeaderID
 		team1.IsFull = team.IsFull
 	}
 	err = m.Orm.Model(&model.Team{}).Create(&team1).Error
@@ -87,6 +106,18 @@ func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid string) error {
 		return err
 	}
 	return nil
+}
+
+func CheckInTeam(teamID int, uid string) bool {
+	var team model.Team
+	err := teamDao.Orm.Model(&model.Team{}).
+		Where("id = ? and student_id = ?", teamID, uid).
+		First(&team).
+		Error
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func (m TeamDao) TeamIsFull(id int) (bool, error) {
@@ -102,7 +133,7 @@ func (m TeamDao) TeamIsFull(id int) (bool, error) {
 		return false, err
 	}
 	err = m.Orm.Model(&model.Team{}).
-		Where("c_id = ? and teacher_id = ? and team_name =?", team.CID, team.TeacherID, team.Name).
+		Where("c_id = ? and teacher_id = ? and team_name =?", team.CID, team.TeacherID, team.TeamName).
 		Count(&nTotal).
 		Error
 	if err != nil {

@@ -14,7 +14,7 @@ func InitTeamRouters() {
 			rgPublicTeam.GET("/team_all", teamApi.GetTeamAll)
 			rgPublicTeam.GET("/team_is_not_full", teamApi.GetTeamNotFull)
 		}
-		rgAuthTeam := rgAuth.Group("user")
+		rgAuthTeam := rgAuth.Group("team")
 		{
 			rgAuthTeam.POST("/team_new", teamApi.NewTeam)
 			rgAuthTeam.PUT("/join_team", teamApi.JoinTeam)

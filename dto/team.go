@@ -28,9 +28,10 @@ func (m *TeamAddDTO) Validate() error {
 
 func (m *TeamAddDTO) Convert(stuID string, isFull bool) model.Team {
 	return model.Team{
-		Name:      m.TeamName,
+		TeamName:  m.TeamName,
 		TeacherID: m.TeacherID,
 		CID:       m.CID,
+		LeaderID:  stuID,
 		StudentID: stuID,
 		IsFull:    isFull,
 	}
