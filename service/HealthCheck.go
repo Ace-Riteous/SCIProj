@@ -28,7 +28,7 @@ func ServerHealthCheck() {
 	if err != nil {
 		panic(err)
 	}
-	timeTick := time.NewTicker(time.Second * 5)
+	timeTick := time.NewTicker(time.Second * 1)
 	for {
 		select {
 		case <-timeTick.C:
@@ -52,8 +52,14 @@ func UserHealthCheck(uid string) {
 			panic(err)
 		}
 	}
+	var length int
+	if len(uid) < 6 {
+		length = 6
+	} else {
+		length = len(uid)
+	}
 	//新建一个user_log.txt
-	ulog, err := os.Create("./user_log/user_" + uid + "_log.txt")
+	ulog, err := os.Create("./user_log/user_" + utils.GenerateRandomString(length) + "_log.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -63,7 +69,7 @@ func UserHealthCheck(uid string) {
 	if err != nil {
 		panic(err)
 	}
-	timeTick := time.NewTicker(time.Second * 5)
+	timeTick := time.NewTicker(time.Second * 1)
 	for {
 		select {
 		case <-timeTick.C:

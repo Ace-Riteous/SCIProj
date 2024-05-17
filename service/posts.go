@@ -61,3 +61,11 @@ func (m PostService) AddCompetition(addDTO dto.CompetitionAddDTO, token string) 
 		return errors.New("Only teacher can add competition")
 	}
 }
+
+func (m PostService) GetCompetitionDetail(cid uint) (model.Competition, error) {
+	competition, err := m.Dao.GetCompetitionDetail(cid)
+	if err != nil {
+		return model.Competition{}, err
+	}
+	return competition, nil
+}

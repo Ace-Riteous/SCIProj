@@ -56,3 +56,16 @@ func (m PostDao) AddCompetition(dto dto.CompetitionAddDTO) error {
 	return nil
 
 }
+
+func (m PostDao) GetCompetitionDetail(cid uint) (model.Competition, error) {
+	var competition model.Competition
+	err := m.Orm.Model(&model.Competition{}).
+		Where("id = ?", cid).
+		First(&competition).
+		Error
+	if err != nil {
+		return model.Competition{}, err
+	}
+	return competition, nil
+
+}

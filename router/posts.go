@@ -16,6 +16,7 @@ func InitPostRouters() {
 		rgAuthPost := rgAuth.Group("post")
 		{
 			rgAuthPost.POST("/competition_new", postApi.AddCompetition)
+			rgAuthPost.GET("/competition_detail/:c_id", postApi.GetCompetitionDetailByCid)
 		}
 	})
 }

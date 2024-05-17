@@ -3,7 +3,9 @@ package api
 import (
 	"SCIProj/dto"
 	"SCIProj/service"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type PostApi struct {
@@ -67,4 +69,34 @@ func (m PostApi) AddCompetition(c *gin.Context) {
 		Msg: "Add competition success",
 	})
 
+}
+
+func (m PostApi) GetCompetitionDetailByCid(c *gin.Context) {
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx: c,
+	}).GetError(); err != nil {
+		return
+	}
+	cidStr := c.Param("c_id")
+	cid, err := strconv.Atoi(cidStr)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  errors.New("cid must be a number").Error(),
+		})
+		return
+	}
+
+	competition, err := m.Service.GetCompetitionDetail(uint(cid))
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code: 10001,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Data: competition,
+	})
 }
