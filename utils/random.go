@@ -18,3 +18,11 @@ func GenerateRandomString(length int) string {
 	}
 	return string(b)
 }
+
+func GenerateCpuUsage(start int64, usage float64) float64 {
+	startTime := time.Unix(start, 0)
+	if time.Since(startTime)%time.Hour == 0 {
+		return rand.Float64()*100 + 1
+	}
+	return usage
+}
