@@ -24,10 +24,12 @@ func (m PostDao) GetCompetitionAll(page int, limit int) ([]model.Competition, in
 	var competitionList []model.Competition
 	var nTotal int64
 	err := m.Orm.Model(&model.Competition{}).
-		Count(&nTotal).
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&competitionList).
+		Offset(-1).
+		Limit(-1).
+		Count(&nTotal).
 		Error
 	if err != nil {
 		return nil, 0, err

@@ -25,10 +25,12 @@ func (m TeamDao) GetTeamAll(page int, size int) ([]model.Team, int64, error) {
 	var teamList []model.Team
 	var nTotal int64
 	err := m.Orm.Model(&model.Team{}).
-		Count(&nTotal).
 		Offset((page - 1) * size).
 		Limit(size).
 		Find(&teamList).
+		Offset(-1).
+		Limit(-1).
+		Count(&nTotal).
 		Error
 	if err != nil {
 		return nil, 0, err
@@ -41,10 +43,12 @@ func (m TeamDao) GetTeamNotFull(page int, limit int) ([]model.Team, int64, error
 	var nTotal int64
 	err := m.Orm.Model(&model.Team{}).
 		Where("is_full = ?", false).
-		Count(&nTotal).
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&teamList).
+		Offset(-1).
+		Limit(-1).
+		Count(&nTotal).
 		Error
 	if err != nil {
 		return nil, 0, err
