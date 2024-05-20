@@ -40,8 +40,8 @@ func (m *UserApi) Login(c *gin.Context) {
 	}
 
 	type reData struct {
-		SevenID string `json:"seven_id"`
-		Token   string `json:"token"`
+		SevenID string      `json:"seven_id"`
+		Token   interface{} `json:"token"`
 	}
 	m.OK(ResponseJson{
 		Msg: "Login success",
