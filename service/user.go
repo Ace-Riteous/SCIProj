@@ -25,7 +25,7 @@ func NewUserService() *UserService {
 	return userService
 }
 
-func (m UserService) Login(dto dto.UserLoginDTO) (string, error) {
+func (m UserService) Login(dto dto.UserLoginDTO) (interface{}, error) {
 	if err := dto.Validate(); err != nil {
 		return "", err
 	}
@@ -42,7 +42,11 @@ func (m UserService) Login(dto dto.UserLoginDTO) (string, error) {
 					return "", err
 				}
 				go UserHealthCheck(teacher.SevenID)
-				return token, nil
+				type reData struct {
+					Token string
+					Role  string
+				}
+				return reData{token, "teacher"}, nil
 			}
 		}
 	} else {
@@ -53,7 +57,11 @@ func (m UserService) Login(dto dto.UserLoginDTO) (string, error) {
 				return "", err
 			}
 			go UserHealthCheck(student.SevenID)
-			return token, nil
+			type reData struct {
+				Token string
+				Role  string
+			}
+			return reData{token, "student"}, nil
 		}
 	}
 	return "", errors.New("Password incorrect")

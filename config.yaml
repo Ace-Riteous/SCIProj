@@ -1,6 +1,7 @@
 
 # Gin-Vue-Admin Global Configuration
-
+server:
+  router: '8.137.93.135:8090'
 # jwt configuration
 jwt:
   signing-key: 'sciproj'
@@ -26,12 +27,11 @@ zap:
 
 # mysql connect configuration
 mysql:
-  addr:
-  port: ':3306'
+  path: '172.29.19.235:3306'
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
-  db-name: 'SCIProj'
+  db-name: 'sciproj'
   username: 'root'
-  password: '941cao**'
+  password: '123456'
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: false
@@ -40,5 +40,5 @@ mysql:
 # redis configuration
 redis:
   db: 0
-  addr: ':6379'
+  addr: '172.29.19.235:6379'
   password: ''
