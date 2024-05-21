@@ -4,6 +4,7 @@ import (
 	"SCIProj/dto"
 	"SCIProj/model"
 	"errors"
+	"strconv"
 )
 
 var teamDao *TeamDao
@@ -59,11 +60,13 @@ func (m TeamDao) GetTeamNotFull(page int, limit int) ([]model.Team, int64, error
 
 func (m TeamDao) NewTeam(dto dto.TeamAddDTO, uid string) error {
 	var team model.Team
-	team = dto.Convert(uid, false)
+	var post model.Competition
+	err := m.Orm.Model(&model.Competition{}).Where("id = ?", dto.CID).First(&post).Error
+	team = dto.Convert(uid, false, post.Member)
 	if CheckHasTeamed(team) {
 		return errors.New("every student can only create one team in one competition")
 	}
-	if err := m.Orm.Model(&model.Team{}).Save(&team).Error; err != nil {
+	if err = m.Orm.Model(&model.Team{}).Save(&team).Error; err != nil {
 		return err
 	}
 	return nil
@@ -103,7 +106,9 @@ func (m TeamDao) JoinTeam(joinDTO dto.TeamJoinDTO, uid string) error {
 		team1.CID = team.CID
 		team1.StudentID = uid
 		team1.LeaderID = team.LeaderID
+		team1.QQGroup = team.QQGroup
 		team1.IsFull = team.IsFull
+		team1.Now2all = team.Now2all
 	}
 	err = m.Orm.Model(&model.Team{}).Create(&team1).Error
 	if err != nil {
@@ -145,7 +150,17 @@ func (m TeamDao) TeamIsFull(id int) (bool, error) {
 	}
 	if int(nTotal) >= post.Member {
 		err = m.Orm.Model(&model.Team{}).Where("id = ?", id).Update("is_full", true).Error
+		if err != nil {
+			return true, err
+		}
+		n2a := strconv.Itoa(int(nTotal)) + "/" + strconv.Itoa(post.Member)
+		err = m.Orm.Model(&model.Team{}).Where("id = ?", id).Update("now2all", n2a).Error
+		if err != nil {
+			return true, err
+		}
 		return true, nil
 	}
+	n2a := strconv.Itoa(int(nTotal)) + "/" + strconv.Itoa(post.Member)
+	err = m.Orm.Model(&model.Team{}).Where("id = ?", id).Update("now2all", n2a).Error
 	return false, nil
 }

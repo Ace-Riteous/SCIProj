@@ -41,6 +41,7 @@ func newData() {
 		LeaderID:  "1234567",
 		CID:       1,
 		TeacherID: "7654321",
+		QQGroup:   "123456",
 		IsFull:    false,
 	}
 	err := global.DB.Model(&model.Student{}).Where("seven_id=?", student.SevenID).First(&student).Error

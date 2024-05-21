@@ -3,6 +3,7 @@ package dto
 import (
 	"SCIProj/model"
 	"github.com/go-playground/validator/v10"
+	"strconv"
 )
 
 type TeamAllDTO struct {
@@ -19,6 +20,7 @@ type TeamAddDTO struct {
 	TeamName  string `json:"team_name" form:"team_name" validate:"required"`
 	TeacherID string `json:"teacher_id" form:"teacher_id" validate:"required,len=7"`
 	CID       uint   `json:"c_id" form:"c_id" validate:"required,number"`
+	QQGroup   string `json:"qq_group" form:"qq_group" validate:"required,number"`
 }
 
 func (m *TeamAddDTO) Validate() error {
@@ -26,13 +28,15 @@ func (m *TeamAddDTO) Validate() error {
 	return validate.Struct(m)
 }
 
-func (m *TeamAddDTO) Convert(stuID string, isFull bool) model.Team {
+func (m *TeamAddDTO) Convert(stuID string, isFull bool, member int) model.Team {
 	return model.Team{
 		TeamName:  m.TeamName,
 		TeacherID: m.TeacherID,
 		CID:       m.CID,
 		LeaderID:  stuID,
 		StudentID: stuID,
+		QQGroup:   m.QQGroup,
+		Now2all:   "1/" + strconv.Itoa(member),
 		IsFull:    isFull,
 	}
 }
