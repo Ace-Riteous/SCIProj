@@ -19,7 +19,6 @@ COPY . .
 
 RUN go build -o sciproj main.go
 
-
 # 创建新的构建阶段
 FROM scratch as final
 

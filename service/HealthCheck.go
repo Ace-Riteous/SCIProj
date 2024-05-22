@@ -64,7 +64,7 @@ func ServerHealthCheck() {
 			}
 			if percentages[0] > utils.GenerateCpuUsage(timeNow, HighCpuUsage) {
 				_, _ = slog.WriteString("cpu usage is too high! " + fmt.Sprintf("cpu usage: %v\n", percentages))
-				os.Exit(0)
+				panic("cpu usage is too high! " + fmt.Sprintf("cpu usage: %v\n", percentages))
 			}
 		}
 	}

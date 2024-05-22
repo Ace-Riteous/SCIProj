@@ -3,7 +3,7 @@
 #8.137.93.135
 #172.29.19.235
 server:
-  router: '127.0.0.1:8090'
+  router: '8.137.93.135:8090'
 # jwt configuration
 jwt:
   signing-key: 'sciproj'
@@ -29,11 +29,11 @@ zap:
 
 # mysql connect configuration
 mysql:
-  path: '127.0.0.1:3306'
+  path: '172.29.19.235:3306'
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
   db-name: 'sciproj'
   username: 'root'
-  password: '941cao**'
+  password: '123456'
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: false
